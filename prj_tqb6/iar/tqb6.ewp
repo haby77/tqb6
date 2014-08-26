@@ -615,7 +615,7 @@
         </option>
         <option>
           <name>OOCOutputFile</name>
-          <state>qpps.bin</state>
+          <state>tqb6.bin</state>
         </option>
         <option>
           <name>OOCCommandLineProducer</name>
@@ -669,7 +669,7 @@
         </option>
         <option>
           <name>IlinkOutputFile</name>
-          <state>qpps.out</state>
+          <state>tqb6.out</state>
         </option>
         <option>
           <name>IlinkDebugInfoEnable</name>
