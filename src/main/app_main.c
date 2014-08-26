@@ -34,6 +34,9 @@
     #include "app_env.h"
 #endif
 
+#if (defined(QN_ADV_WDT))
+	#include "wdt.h"
+#endif
 #include "usr_design.h"
 #include "system.h"
 #include "uart.h"
@@ -164,7 +167,7 @@ int main(void)
 #endif
 
     usr_init();
-
+   
     sleep_init();
     wakeup_by_sleep_timer(__32K_TYPE);
 

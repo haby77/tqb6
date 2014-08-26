@@ -25,6 +25,11 @@
  */
 #include "gpio.h"
 #include "led.h"
+#include "lib.h"
+//t-chip
+#if (defined(LED_BREATH))
+	#include "PWM.h"
+#endif
 
 /*
  * FUNCTION DEFINITIONS
@@ -142,6 +147,5 @@ enum led_st led_get(uint32_t idx)
 }
 
 /// @} LED
-
 
 

@@ -47,6 +47,9 @@
     #error "No correct chip version is defined!"
 #endif
 
+//configure if using QN9021
+#define CFG_9021_MINIDK
+
 /// Evaluation Board Indication
 #if (defined(CFG_9021_MINIDK))
     #define QN_9021_MINIDK
@@ -124,6 +127,11 @@
 /// ADV watchdog timer
 #if (defined(CFG_ADV_WDT))
 #define QN_ADV_WDT
+#endif
+
+/// LED breath t-chip
+#if (defined(CFG_LED_BREATH))
+#define LED_BREATH
 #endif
 
 /// Memory retention

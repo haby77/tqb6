@@ -72,5 +72,11 @@ extern void usr_button1_cb(void);
 extern int app_button_timer_handler(ke_msg_id_t const msgid, void const *param, ke_task_id_t const dest_id, ke_task_id_t const src_id);
 extern void usr_init(void);
 extern void gpio_interrupt_callback(enum gpio_pin pin);
+//t-chip
+extern int app_led_breath_handler(ke_msg_id_t const msgid, void const *param,ke_task_id_t const dest_id, ke_task_id_t const src_id);
+extern void usr_button2_cb(void);
+extern void app_event_button2_press_handler(void);
+extern void usr_button1_cb(void);
+extern void app_event_button1_press_handler(void);
 
 #endif
