@@ -595,5 +595,34 @@ void usr_init(void)
 #endif
 }
 
+//t-chip
+int app_led_breath_handler(ke_msg_id_t const msgid, void const *param,
+                               ke_task_id_t const dest_id, ke_task_id_t const src_id)
+{
+				led_breath_on(vol_breath[vol]);	
+				//QPRINTF("  0x%x  ",vol_breath[vol]);
+				vol++;
+				if (vol <33)
+				{
+						ke_timer_set(APP_LED_BREATH,TASK_APP,LED_MEG_PERIOD);
+				}
+				else
+				{
+						vol = 0;
+						ke_timer_set(APP_LED_BREATH,TASK_APP,LED_MEG_PERIOD);
+			  }
+				return(KE_MSG_CONSUMED);
+}
+
+int app_feed_wdt_handler(ke_msg_id_t const msgid, void const *param,ke_task_id_t const dest_id, 
+												 ke_task_id_t const src_id)
+{
+    #if (defined(QN_ADV_WDT))
+        wdt_set(0x7FFF);
+    #endif
+    ke_timer_set(APP_FEED_WDT,TASK_APP,30);
+    return(KE_MSG_CONSUMED);
+}
+
 /// @} USR
 

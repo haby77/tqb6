@@ -34,6 +34,9 @@
     #include "app_env.h"
 #endif
 
+#if (defined(QN_ADV_WDT))
+	#include "wdt.h"
+#endif
 #include "usr_design.h"
 #include "system.h"
 #include "uart.h"
@@ -121,6 +124,10 @@ int main(void)
 
     // System initialization, user configuration
     SystemInit();
+		
+		//t-chip  WDT init
+		wdt_init(0x7FF, WDT_RESET_MOD);
+		wdt_set(0xFFFF);
 
     // Profiles register
 #if (QN_WORK_MODE != WORK_MODE_HCI)

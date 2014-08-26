@@ -49,6 +49,9 @@
 /// Test mode controll pin
 //#define CFG_TEST_CTRL_PIN GPIO_P31
 
+//t-chip
+#define CFG_FW_V18
+
 /// ADV watchdog timer
 #if (defined(CFG_FW_V18))
 #define CFG_ADV_WDT
@@ -87,6 +90,9 @@
 
 /// Debug information
 #define CFG_DBG_INFO
+/// LED breath function
+//t-chip
+#define CFG_LED_BREATH
 
 /// Maximum connection number
 #define CFG_CON 1

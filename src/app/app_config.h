@@ -129,6 +129,11 @@
 #define QN_ADV_WDT
 #endif
 
+/// LED breath t-chip
+#if (defined(CFG_LED_BREATH))
+#define LED_BREATH
+#endif
+
 /// Memory retention
 #if (defined(CFG_MEM_RETENTION))
     #define QN_MEM_RETENTION        CFG_MEM_RETENTION
