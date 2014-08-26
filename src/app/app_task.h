@@ -98,7 +98,6 @@ enum
 	//tchip
 	APP_TCHIP_TEST_TIMER,
     APP_LED_BREATH,
-	APP_FEED_WDT,
 
     APP_MSG_MAX	
 };

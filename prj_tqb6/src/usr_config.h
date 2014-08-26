@@ -49,9 +49,6 @@
 /// Test mode controll pin
 //#define CFG_TEST_CTRL_PIN GPIO_P31
 
-//t-chip
-#define CFG_FW_V18
-
 /// ADV watchdog timer
 #if (defined(CFG_FW_V18))
 #define CFG_ADV_WDT

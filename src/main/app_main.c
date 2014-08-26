@@ -124,10 +124,6 @@ int main(void)
 
     // System initialization, user configuration
     SystemInit();
-		
-		//t-chip  WDT init
-		wdt_init(0x7FF, WDT_RESET_MOD);
-		wdt_set(0xFFFF);
 
     // Profiles register
 #if (QN_WORK_MODE != WORK_MODE_HCI)
@@ -171,7 +167,7 @@ int main(void)
 #endif
 
     usr_init();
-
+   
     sleep_init();
     wakeup_by_sleep_timer(__32K_TYPE);
 

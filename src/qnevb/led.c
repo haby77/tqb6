@@ -25,25 +25,11 @@
  */
 #include "gpio.h"
 #include "led.h"
+#include "lib.h"
 //t-chip
 #if (defined(LED_BREATH))
 	#include "PWM.h"
 #endif
-
-/*
- * VARIABLE DEFINITIONS
- ****************************************************************************************
- */
- //t-chip 
-unsigned char vol = 0;
-
-/*
- * ARRAY DEFINITIONS
- ****************************************************************************************
- */
- //t-chip
-unsigned char vol_breath[32] = {25,  50,  74,  97,120 , 142, 162,  181, 197, 212,  225,  236,  245,  251, 254 ,255,254,
-															  251,244,236,225,212,197,181,162,142,120,97,74,50,25,0}; 
 
 /*
  * FUNCTION DEFINITIONS
@@ -161,13 +147,5 @@ enum led_st led_get(uint32_t idx)
 }
 
 /// @} LED
-
-//t-chip
-void led_breath_on(int volume)
-{
-  pwm_init(PWM_CH1);
-	pwm_config(PWM_CH1, PWM_PSCAL_DIV, PWM_COUNT_US(LED_PWM_PERIOD, PWM_PSCAL_DIV), PWM_COUNT_US(volume, PWM_PSCAL_DIV));
-	pwm_enable(PWM_CH1, MASK_ENABLE);		
-}
 
 

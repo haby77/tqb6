@@ -37,6 +37,8 @@
 #include "wdt.h"
 #endif
 #include "sleep.h"
+#include "usr_led.h"
+#include "usr_button.h"
 
 
 /*
@@ -55,9 +57,6 @@
 
 #define APP_HEART_RATE_MEASUREMENT_TO     1400 // 14s
 #define APP_HRPS_ENERGY_EXPENDED_STEP     50
-
-#define EVENT_BUTTON1_PRESS_ID						0
-#define EVENT_BUTTON2_PRESS_ID						1
 
 ///IOS Connection Parameter
 #define IOS_CONN_INTV_MAX                              0x0010
@@ -90,53 +89,6 @@ struct usr_env_tag usr_env = {LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE};
  ****************************************************************************************
  */
 
-/**
- ****************************************************************************************
- * @brief   Led1 for BLE status
- ****************************************************************************************
- */
-static void usr_led1_set(uint16_t timer_on, uint16_t timer_off)
-{
-    usr_env.led1_on_dur = timer_on;
-    usr_env.led1_off_dur = timer_off;
-
-    if (timer_on == 0 || timer_off == 0)
-    {
-        if (timer_on == 0)
-        {
-            led_set(1, LED_OFF);
-        }
-        if (timer_off == 0)
-        {
-            led_set(1, LED_ON);
-        }
-        ke_timer_clear(APP_SYS_LED_1_TIMER, TASK_APP);
-    }
-    else
-    {
-        led_set(1, LED_OFF);
-        ke_timer_set(APP_SYS_LED_1_TIMER, TASK_APP, timer_off);
-    }
-}
-
-/**
- ****************************************************************************************
- * @brief   Led 1 flash process
- ****************************************************************************************
- */
-static void usr_led1_process(void)
-{
-    if(led_get(1) == LED_ON)
-    {
-        led_set(1, LED_OFF);
-        ke_timer_set(APP_SYS_LED_1_TIMER, TASK_APP, usr_env.led1_off_dur);
-    }
-    else
-    {
-        led_set(1, LED_ON);
-        ke_timer_set(APP_SYS_LED_1_TIMER, TASK_APP, usr_env.led1_on_dur);
-    }
-}
 
 /**
  ****************************************************************************************
@@ -410,6 +362,7 @@ int app_button_timer_handler(ke_msg_id_t const msgid, void const *param,
                 QPRINTF("APP_SYS_BUTTON_2_TIMER\r\n");
                 uint8_t cmd = 0x01;
                 app_qpps_data_send(app_qpps_env->conhdl, 1, 1, &cmd);
+                ke_timer_set(APP_LED_BREATH,TASK_APP,LED_MEG_PERIOD);
                 buzzer_off();
             }
             break;
@@ -422,116 +375,116 @@ int app_button_timer_handler(ke_msg_id_t const msgid, void const *param,
     return (KE_MSG_CONSUMED);
 }
 
-/**
- ****************************************************************************************
- * @brief Handles button press before key debounce.
- * @return If the message was consumed or not.
- ****************************************************************************************
- */
-void app_event_button1_press_handler(void)
-{
-#if ((QN_DEEP_SLEEP_EN) && (!QN_32K_RCO))
-    if (sleep_env.deep_sleep)
-    {
-        sleep_env.deep_sleep = false;
-        // start 32k xtal wakeup timer
-        wakeup_32k_xtal_start_timer();
-    }
-#endif
+///**
+// ****************************************************************************************
+// * @brief Handles button press before key debounce.
+// * @return If the message was consumed or not.
+// ****************************************************************************************
+// */
+//void app_event_button1_press_handler(void)
+//{
+//#if ((QN_DEEP_SLEEP_EN) && (!QN_32K_RCO))
+//    if (sleep_env.deep_sleep)
+//    {
+//        sleep_env.deep_sleep = false;
+//        // start 32k xtal wakeup timer
+//        wakeup_32k_xtal_start_timer();
+//    }
+//#endif
 
-    // delay 20ms to debounce
-    ke_timer_set(APP_SYS_BUTTON_1_TIMER, TASK_APP, 2);
-    ke_evt_clear(1UL << EVENT_BUTTON1_PRESS_ID);
-}
+//    // delay 20ms to debounce
+//    ke_timer_set(APP_SYS_BUTTON_1_TIMER, TASK_APP, 2);
+//    ke_evt_clear(1UL << EVENT_BUTTON1_PRESS_ID);
+//}
 
-/**
- ****************************************************************************************
- * @brief   Button 1 click callback
- * @description
- *  Button 1 is used to enter adv mode.
- ****************************************************************************************
- */
-void usr_button1_cb(void)
-{
-    // If BLE is in the sleep mode, wakeup it.
-    if(ble_ext_wakeup_allow())
-    {
-#if ((QN_DEEP_SLEEP_EN) && (!QN_32K_RCO))
-        if (sleep_env.deep_sleep)
-        {
-            wakeup_32k_xtal_switch_clk();
-        }
-#endif
-
-        sw_wakeup_ble_hw();
-
-    }
-
-    // key debounce:
-    // We can set a soft timer to debounce.
-    // After wakeup BLE, the timer is not calibrated immediately and it is not precise.
-    // So We set a event, in the event handle, set the soft timer.
-    ke_evt_set(1UL << EVENT_BUTTON1_PRESS_ID);
-}
-
-/**
- ****************************************************************************************
- * @brief Handles button press before key debounce.
- * @return If the message was consumed or not.
- ****************************************************************************************
- */
-void app_event_button2_press_handler(void)
-{
-#if ((QN_DEEP_SLEEP_EN) && (!QN_32K_RCO))
-    if (sleep_env.deep_sleep) 
-    {
-        sleep_env.deep_sleep = false;
-        // start 32k xtal wakeup timer
-        wakeup_32k_xtal_start_timer();
-    }
-#endif
-
-    // delay 20ms to debounce
-    ke_timer_set(APP_SYS_BUTTON_2_TIMER, TASK_APP, 2);
-    ke_evt_clear(1UL << EVENT_BUTTON2_PRESS_ID);
-}
-
-/**
- ****************************************************************************************
- * @brief   Button 2 click callback
- * @description
- *  Button 2 is used to enter adv mode.
- ****************************************************************************************
- */
-void usr_button2_cb(void)
-{
-    // If BLE is in the sleep mode, wakeup it.
-    if(ble_ext_wakeup_allow())
-    {
-#if ((QN_DEEP_SLEEP_EN) && (!QN_32K_RCO))
-        if (sleep_env.deep_sleep)
-        {
-            wakeup_32k_xtal_switch_clk();
-        }
-#endif
-    
-        sw_wakeup_ble_hw();
-
-//#if (QN_DEEP_SLEEP_EN)
-//        // prevent deep sleep
-//        if(sleep_get_pm() == PM_DEEP_SLEEP)
+///**
+// ****************************************************************************************
+// * @brief   Button 1 click callback
+// * @description
+// *  Button 1 is used to enter adv mode.
+// ****************************************************************************************
+// */
+//void usr_button1_cb(void)
+//{
+//    // If BLE is in the sleep mode, wakeup it.
+//    if(ble_ext_wakeup_allow())
+//    {
+//#if ((QN_DEEP_SLEEP_EN) && (!QN_32K_RCO))
+//        if (sleep_env.deep_sleep)
 //        {
-//            sleep_set_pm(PM_SLEEP);
+//            wakeup_32k_xtal_switch_clk();
 //        }
 //#endif
-    }
 
-    // key debounce:
-    // We can set a soft timer to debounce.
-    // After wakeup BLE, the timer is not calibrated immediately and it is not precise.
-    // So We set a event, in the event handle, set the soft timer.
-    ke_evt_set(1UL << EVENT_BUTTON2_PRESS_ID);
-}
+//        sw_wakeup_ble_hw();
+
+//    }
+
+//    // key debounce:
+//    // We can set a soft timer to debounce.
+//    // After wakeup BLE, the timer is not calibrated immediately and it is not precise.
+//    // So We set a event, in the event handle, set the soft timer.
+//    ke_evt_set(1UL << EVENT_BUTTON1_PRESS_ID);
+//}
+
+///**
+// ****************************************************************************************
+// * @brief Handles button press before key debounce.
+// * @return If the message was consumed or not.
+// ****************************************************************************************
+// */
+//void app_event_button2_press_handler(void)
+//{
+//#if ((QN_DEEP_SLEEP_EN) && (!QN_32K_RCO))
+//    if (sleep_env.deep_sleep) 
+//    {
+//        sleep_env.deep_sleep = false;
+//        // start 32k xtal wakeup timer
+//        wakeup_32k_xtal_start_timer();
+//    }
+//#endif
+
+//    // delay 20ms to debounce
+//    ke_timer_set(APP_SYS_BUTTON_2_TIMER, TASK_APP, 2);
+//    ke_evt_clear(1UL << EVENT_BUTTON2_PRESS_ID);
+//}
+
+///**
+// ****************************************************************************************
+// * @brief   Button 2 click callback
+// * @description
+// *  Button 2 is used to enter adv mode.
+// ****************************************************************************************
+// */
+//void usr_button2_cb(void)
+//{
+//    // If BLE is in the sleep mode, wakeup it.
+//    if(ble_ext_wakeup_allow())
+//    {
+//#if ((QN_DEEP_SLEEP_EN) && (!QN_32K_RCO))
+//        if (sleep_env.deep_sleep)
+//        {
+//            wakeup_32k_xtal_switch_clk();
+//        }
+//#endif
+//    
+//        sw_wakeup_ble_hw();
+
+////#if (QN_DEEP_SLEEP_EN)
+////        // prevent deep sleep
+////        if(sleep_get_pm() == PM_DEEP_SLEEP)
+////        {
+////            sleep_set_pm(PM_SLEEP);
+////        }
+////#endif
+//    }
+
+//    // key debounce:
+//    // We can set a soft timer to debounce.
+//    // After wakeup BLE, the timer is not calibrated immediately and it is not precise.
+//    // So We set a event, in the event handle, set the soft timer.
+//    ke_evt_set(1UL << EVENT_BUTTON2_PRESS_ID);
+//}
 
 /**
  ****************************************************************************************
@@ -614,15 +567,6 @@ int app_led_breath_handler(ke_msg_id_t const msgid, void const *param,
 				return(KE_MSG_CONSUMED);
 }
 
-int app_feed_wdt_handler(ke_msg_id_t const msgid, void const *param,ke_task_id_t const dest_id, 
-												 ke_task_id_t const src_id)
-{
-    #if (defined(QN_ADV_WDT))
-        wdt_set(0x7FFF);
-    #endif
-    ke_timer_set(APP_FEED_WDT,TASK_APP,30);
-    return(KE_MSG_CONSUMED);
-}
 
 /// @} USR
 

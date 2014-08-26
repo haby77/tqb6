@@ -19,11 +19,6 @@
  * MACRO DEFINITIONS
  ****************************************************************************************
  */
- 
-//t-chip
-#define LED_PWM_PERIOD 255
-#define LED_MEG_PERIOD 20
-//end
 
 #if !defined(QN_9021_MINIDK)
 
@@ -42,10 +37,6 @@
 #define LED5_PIN    (GPIO_P02)  // no pin in QN9021
 
 #endif
-
- //t-chip
-extern unsigned char vol;
-extern unsigned char vol_breath[32];
 
 /*
  * ENUMERATION DEFINITIONS
@@ -66,7 +57,5 @@ extern void led_init(void);
 extern void led_matrix(uint32_t matrix);
 extern void led_set(uint32_t idx, enum led_st enable);
 extern enum led_st led_get(uint32_t idx);
-//t-chip
-extern void led_breath_on(int volume);
 
 #endif
