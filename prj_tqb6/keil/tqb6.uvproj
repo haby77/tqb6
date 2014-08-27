@@ -445,6 +445,16 @@
               <FileType>1</FileType>
               <FilePath>..\src\usr_bass.c</FilePath>
             </File>
+            <File>
+              <FileName>usr_button.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\usr_button.c</FilePath>
+            </File>
+            <File>
+              <FileName>usr_led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\usr_led.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

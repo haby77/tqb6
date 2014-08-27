@@ -55,6 +55,9 @@
 #define LED_ON_DUR_IDLE                   0
 #define LED_OFF_DUR_IDLE                  0xffff
 
+#define KEY_SHORT_GATE                    4
+#define KEY_LONG_GATE                     8
+
 #define APP_HEART_RATE_MEASUREMENT_TO     1400 // 14s
 #define APP_HRPS_ENERGY_EXPENDED_STEP     50
 
@@ -63,6 +66,13 @@
 #define IOS_CONN_INTV_MIN                              0x0008
 #define IOS_SLAVE_LATENCY                              0x0000
 #define IOS_STO_MULT                                   0x012c
+
+
+#define KEY_NO_LONG_PRESS           (true)
+#define KEY_LONG_PRESS            (false)
+
+static  bool    KEY_LONG_PRESS_FLAG;     
+static  uint8_t Button2_key_count = 0;
 
 /*
  * GLOBAL VARIABLE DEFINITIONS
@@ -315,11 +325,8 @@ void usr_sleep_restore(void)
 int app_button_timer_handler(ke_msg_id_t const msgid, void const *param,
                                ke_task_id_t const dest_id, ke_task_id_t const src_id)
 {
-    switch(msgid)
-    {
-        case APP_SYS_BUTTON_1_TIMER:
             // make sure the button is pressed
-            if(gpio_read_pin(BUTTON1_PIN) == GPIO_LOW)
+            if (KEY_LONG_PRESS_FLAG == KEY_LONG_PRESS)
             {
                 if(APP_IDLE == ke_state_get(TASK_APP))
                 {
@@ -335,16 +342,17 @@ int app_button_timer_handler(ke_msg_id_t const msgid, void const *param,
                         // prevent entering into deep sleep mode
                         sleep_set_pm(PM_SLEEP);
 #endif
-                    }
+                    }//if APP_IDLE && KEY_LONG_PRESS && Server no working on,start adv.
                     else
                     {
                         QPRINTF("APP_SYS_BUTTON_1_TIMER\r\n");
                         uint8_t cmd = 0x01;
                         app_qpps_data_send(app_qpps_env->conhdl, 0, 1, &cmd);
-                    }
+                    }//if APP_IDLE && Server is working on,sent msg to alert.
                 }
                 else if(APP_ADV == ke_state_get(TASK_APP))
                 {
+                    QPRINTF("APP_ADV\r\n");
                     // stop adv
                     app_gap_adv_stop_req();
 
@@ -352,139 +360,19 @@ int app_button_timer_handler(ke_msg_id_t const msgid, void const *param,
                     // allow entering into deep sleep mode
                     sleep_set_pm(PM_DEEP_SLEEP);
 #endif
+                }//if APP_ADV ,stop ADV and sleep.
+            }
+            else
+            {
+                QPRINTF("KEY_NO_LONG_PRESS\r\n");
+                if (APP_IDLE == ke_state_get(TASK_APP))
+                {
+                    uint8_t cmd = 0x01;
+                    app_qpps_data_send(app_qpps_env->conhdl, 1, 1, &cmd);
                 }
             }
-            break;
-
-        case APP_SYS_BUTTON_2_TIMER:
-            if(gpio_read_pin(BUTTON2_PIN) == GPIO_LOW)
-            {
-                QPRINTF("APP_SYS_BUTTON_2_TIMER\r\n");
-                uint8_t cmd = 0x01;
-                app_qpps_data_send(app_qpps_env->conhdl, 1, 1, &cmd);
-                ke_timer_set(APP_LED_BREATH,TASK_APP,LED_MEG_PERIOD);
-                buzzer_off();
-            }
-            break;
-
-        default:
-            ASSERT_ERR(0);
-            break;
-    }
-
     return (KE_MSG_CONSUMED);
 }
-
-///**
-// ****************************************************************************************
-// * @brief Handles button press before key debounce.
-// * @return If the message was consumed or not.
-// ****************************************************************************************
-// */
-//void app_event_button1_press_handler(void)
-//{
-//#if ((QN_DEEP_SLEEP_EN) && (!QN_32K_RCO))
-//    if (sleep_env.deep_sleep)
-//    {
-//        sleep_env.deep_sleep = false;
-//        // start 32k xtal wakeup timer
-//        wakeup_32k_xtal_start_timer();
-//    }
-//#endif
-
-//    // delay 20ms to debounce
-//    ke_timer_set(APP_SYS_BUTTON_1_TIMER, TASK_APP, 2);
-//    ke_evt_clear(1UL << EVENT_BUTTON1_PRESS_ID);
-//}
-
-///**
-// ****************************************************************************************
-// * @brief   Button 1 click callback
-// * @description
-// *  Button 1 is used to enter adv mode.
-// ****************************************************************************************
-// */
-//void usr_button1_cb(void)
-//{
-//    // If BLE is in the sleep mode, wakeup it.
-//    if(ble_ext_wakeup_allow())
-//    {
-//#if ((QN_DEEP_SLEEP_EN) && (!QN_32K_RCO))
-//        if (sleep_env.deep_sleep)
-//        {
-//            wakeup_32k_xtal_switch_clk();
-//        }
-//#endif
-
-//        sw_wakeup_ble_hw();
-
-//    }
-
-//    // key debounce:
-//    // We can set a soft timer to debounce.
-//    // After wakeup BLE, the timer is not calibrated immediately and it is not precise.
-//    // So We set a event, in the event handle, set the soft timer.
-//    ke_evt_set(1UL << EVENT_BUTTON1_PRESS_ID);
-//}
-
-///**
-// ****************************************************************************************
-// * @brief Handles button press before key debounce.
-// * @return If the message was consumed or not.
-// ****************************************************************************************
-// */
-//void app_event_button2_press_handler(void)
-//{
-//#if ((QN_DEEP_SLEEP_EN) && (!QN_32K_RCO))
-//    if (sleep_env.deep_sleep) 
-//    {
-//        sleep_env.deep_sleep = false;
-//        // start 32k xtal wakeup timer
-//        wakeup_32k_xtal_start_timer();
-//    }
-//#endif
-
-//    // delay 20ms to debounce
-//    ke_timer_set(APP_SYS_BUTTON_2_TIMER, TASK_APP, 2);
-//    ke_evt_clear(1UL << EVENT_BUTTON2_PRESS_ID);
-//}
-
-///**
-// ****************************************************************************************
-// * @brief   Button 2 click callback
-// * @description
-// *  Button 2 is used to enter adv mode.
-// ****************************************************************************************
-// */
-//void usr_button2_cb(void)
-//{
-//    // If BLE is in the sleep mode, wakeup it.
-//    if(ble_ext_wakeup_allow())
-//    {
-//#if ((QN_DEEP_SLEEP_EN) && (!QN_32K_RCO))
-//        if (sleep_env.deep_sleep)
-//        {
-//            wakeup_32k_xtal_switch_clk();
-//        }
-//#endif
-//    
-//        sw_wakeup_ble_hw();
-
-////#if (QN_DEEP_SLEEP_EN)
-////        // prevent deep sleep
-////        if(sleep_get_pm() == PM_DEEP_SLEEP)
-////        {
-////            sleep_set_pm(PM_SLEEP);
-////        }
-////#endif
-//    }
-
-//    // key debounce:
-//    // We can set a soft timer to debounce.
-//    // After wakeup BLE, the timer is not calibrated immediately and it is not precise.
-//    // So We set a event, in the event handle, set the soft timer.
-//    ke_evt_set(1UL << EVENT_BUTTON2_PRESS_ID);
-//}
 
 /**
  ****************************************************************************************
@@ -500,10 +388,6 @@ void gpio_interrupt_callback(enum gpio_pin pin)
             usr_button1_cb();
             break;
 
-        case BUTTON2_PIN:
-            //Button 2 is used to control buzzer off
-            usr_button2_cb();
-            break;
 
 #if (defined(QN_TEST_CTRL_PIN))
         case QN_TEST_CTRL_PIN:
@@ -532,11 +416,6 @@ void usr_init(void)
         ASSERT_ERR(0);
     }
 
-    if(KE_EVENT_OK != ke_evt_callback_set(EVENT_BUTTON2_PRESS_ID,
-                                            app_event_button2_press_handler))
-    {
-        ASSERT_ERR(0);
-    }
     
 #ifdef CFG_PRF_BASS
     // Register button ADC sample event callback
@@ -567,6 +446,32 @@ int app_led_breath_handler(ke_msg_id_t const msgid, void const *param,
 				return(KE_MSG_CONSUMED);
 }
 
+int app_key_st_handler(ke_msg_id_t const msgid, void const *param,ke_task_id_t const dest_id, ke_task_id_t const src_id)
+{
+    if(!(check_button_state(BUTTON1_PIN)))  //press: 0  ;  idle:  1;
+    {
+        Button2_key_count++;
+        ke_timer_set(APP_KEY_ST,TASK_APP,10);
+    }
+    else
+    {
+        if (Button2_key_count < KEY_SHORT_GATE)
+            {
+                KEY_LONG_PRESS_FLAG = KEY_NO_LONG_PRESS;
+                ke_timer_clear(APP_LED_BREATH,TASK_APP);
+                ke_timer_set(APP_SYS_BUTTON_1_TIMER, TASK_APP, 2);           
+            }
+        if (Button2_key_count > KEY_LONG_GATE)
+        {
+             KEY_LONG_PRESS_FLAG = KEY_LONG_PRESS;
+             ke_timer_set(APP_LED_BREATH,TASK_APP,LED_MEG_PERIOD);
+             ke_timer_set(APP_SYS_BUTTON_1_TIMER, TASK_APP, 2);
+        }
+        Button2_key_count = 0;
+        ke_timer_clear(APP_KEY_ST,TASK_APP);
+    }  
+    return(KE_MSG_CONSUMED);
+}
 
 /// @} USR
 

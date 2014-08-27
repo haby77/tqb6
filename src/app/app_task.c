@@ -193,7 +193,6 @@ const struct ke_msg_handler app_default_state[] =
     {APP_ADV_INTV_UPDATE_TIMER,             (ke_msg_func_t) app_gap_adv_intv_update_timer_handler},
 #endif
     {APP_SYS_BUTTON_1_TIMER,                (ke_msg_func_t) app_button_timer_handler},
-    {APP_SYS_BUTTON_2_TIMER,                (ke_msg_func_t) app_button_timer_handler},
 #endif
 #endif
 #endif
@@ -613,6 +612,7 @@ const struct ke_msg_handler app_default_state[] =
 	//tchip
 	{APP_TCHIP_TEST_TIMER,                  (ke_msg_func_t) app_tchip_test_timer_handler},
 	{APP_LED_BREATH,						(ke_msg_func_t) app_led_breath_handler},
+    {APP_KEY_ST,						(ke_msg_func_t) app_key_st_handler},
 		
 };
 
