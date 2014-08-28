@@ -96,7 +96,9 @@ enum
     
 	//tchip
 	APP_TCHIP_TEST_TIMER,
+#if (defined(LED_BREATH))
     APP_LED_BREATH,
+#endif
     APP_KEY_ST,
 
     APP_MSG_MAX	

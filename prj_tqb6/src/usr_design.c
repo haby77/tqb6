@@ -89,9 +89,17 @@ static void adv_wdt_to_handler(void)
                           app_env.scanrsp_data, app_set_scan_rsp_data(app_get_local_service_flag()),
                           GAP_ADV_FAST_INTV1, GAP_ADV_FAST_INTV2);
 }
+#if (defined(LED_BREATH))
+struct usr_env_tag usr_env = {LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE, false, adv_wdt_to_handler,false,0};
+#else
 struct usr_env_tag usr_env = {LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE, false, adv_wdt_to_handler};
+#endif
+#else
+#if (defined(LED_BREATH))
+struct usr_env_tag usr_env = {LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE,false,0};
 #else
 struct usr_env_tag usr_env = {LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE};
+#endif
 #endif
 
 /*
@@ -251,6 +259,15 @@ int app_led_timer_handler(ke_msg_id_t const msgid, void const *param,
 {
     if(msgid == APP_SYS_LED_1_TIMER)
     {
+#if (defined(LED_BREATH))
+    if (usr_env.led_breath_enable == LED_BREATH_ON)
+    {
+        usr_env.led_breath_enable = LED_BREATH_OFF;
+        led_breath_off();   
+        led_set(1,LED_OFF);
+    }
+
+#endif
         usr_led1_process();
     }
 
@@ -428,23 +445,26 @@ void usr_init(void)
 }
 
 //t-chip
+#if (defined(LED_BREATH))
 int app_led_breath_handler(ke_msg_id_t const msgid, void const *param,
                                ke_task_id_t const dest_id, ke_task_id_t const src_id)
 {
-				led_breath_on(vol_breath[vol]);	
-				//QPRINTF("  0x%x  ",vol_breath[vol]);
-				vol++;
-				if (vol <33)
-				{
-						ke_timer_set(APP_LED_BREATH,TASK_APP,LED_MEG_PERIOD);
-				}
-				else
-				{
-						vol = 0;
-						ke_timer_set(APP_LED_BREATH,TASK_APP,LED_MEG_PERIOD);
-			  }
+                if (usr_env.led_breath_enable == LED_BREATH_ON)
+                {            	
+                    usr_env.vol++;
+                    //QPRINTF("  0x%x  ",vol_breath[vol]);
+                    led_breath_on(led_breath_array[usr_env.vol%32]);
+                    ke_timer_set(APP_LED_BREATH,TASK_APP,LED_MEG_PERIOD);
+                }
+                else
+                {
+                    led_breath_off();
+                    led_set(1,LED_OFF);
+                    ke_timer_clear(APP_LED_BREATH,TASK_APP);
+                }
 				return(KE_MSG_CONSUMED);
 }
+#endif
 
 int app_key_st_handler(ke_msg_id_t const msgid, void const *param,ke_task_id_t const dest_id, ke_task_id_t const src_id)
 {
@@ -458,16 +478,26 @@ int app_key_st_handler(ke_msg_id_t const msgid, void const *param,ke_task_id_t c
         if (Button2_key_count < KEY_SHORT_GATE)
             {
                 KEY_LONG_PRESS_FLAG = KEY_NO_LONG_PRESS;
-                ke_timer_clear(APP_LED_BREATH,TASK_APP);
+#if (defined(LED_BREATH))
+                if (APP_IDLE == ke_state_get(TASK_APP))
+                    usr_env.led_breath_enable = LED_BREATH_ON;
+                else
+                    usr_env.led_breath_enable = LED_BREATH_OFF;   
+#endif
                 ke_timer_set(APP_SYS_BUTTON_1_TIMER, TASK_APP, 2);           
             }
         if (Button2_key_count > KEY_LONG_GATE)
         {
              KEY_LONG_PRESS_FLAG = KEY_LONG_PRESS;
-             ke_timer_set(APP_LED_BREATH,TASK_APP,LED_MEG_PERIOD);
+#if (defined(LED_BREATH))
+             usr_env.led_breath_enable = LED_BREATH_OFF;  
+#endif             
              ke_timer_set(APP_SYS_BUTTON_1_TIMER, TASK_APP, 2);
         }
         Button2_key_count = 0;
+#if (defined(LED_BREATH))
+        ke_timer_set(APP_LED_BREATH,TASK_APP,LED_MEG_PERIOD);
+#endif
         ke_timer_clear(APP_KEY_ST,TASK_APP);
     }  
     return(KE_MSG_CONSUMED);

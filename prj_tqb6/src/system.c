@@ -59,7 +59,7 @@ static void SystemIOCfg(void)
                              | P21_GPIO_17_PIN_CTRL
                              | P22_GPIO_18_PIN_CTRL
                              | P23_GPIO_19_PIN_CTRL
-                             | P24_PWM1_PIN_CTRL
+                             | P24_GPIO_20_PIN_CTRL
                              | P25_GPIO_21_PIN_CTRL
                              | P26_GPIO_22_PIN_CTRL
                              | P27_GPIO_23_PIN_CTRL

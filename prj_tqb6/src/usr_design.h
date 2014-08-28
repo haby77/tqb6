@@ -37,6 +37,9 @@
 #define BASS_SAMPLE_NUMBER                16
 #endif
 
+#define LED_BREATH_ON           (true)
+#define LED_BREATH_OFF          (false)
+
 /*
  * STRUCTURE DEFINITIONS
  ****************************************************************************************
@@ -50,6 +53,11 @@ struct usr_env_tag
 #if (defined(QN_ADV_WDT))
     bool        adv_wdt_enable;
     void        (*adv_wdt_to)(void);
+#endif
+
+#if (defined(LED_BREATH))
+    bool  led_breath_enable;
+    uint8_t vol;
 #endif
     
 #if (defined(BASS_SAMPLE_NUMBER))

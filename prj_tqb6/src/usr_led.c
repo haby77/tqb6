@@ -3,30 +3,29 @@
 #include "pwm.h"
 #include "gpio.h"
 #include "lib.h"
-/*
- * VARIABLE DEFINITIONS
- ****************************************************************************************
- */
- //t-chip 
-unsigned char vol = 0;
-
-/*
- * ARRAY DEFINITIONS
- ****************************************************************************************
- */
- //t-chip
-unsigned char vol_breath[32] = {25,  50,  74,  97,120 , 142, 162,  181, 197, 212,  225,  236,  245,  251, 254 ,255,254,
-															  251,244,236,225,212,197,181,162,142,120,97,74,50,25,0}; 
-
 
 //t-chip
+#if (defined(LED_BREATH))
+uint8_t led_breath_array[] = {25,50,74,97,120,142,162,181,197,212,225,236,245,251,254,255,254,
+                              251,244,236,225,212,197,181,162,142,120,97,74,50,25,0};
+
 void led_breath_on(int volume)
 {
+    QN_SYSCON->PMCR1 &= ~(P24_GPIO_20_PIN_CTRL);
+    QN_SYSCON->PMCR1 |= P24_PWM1_PIN_CTRL;
     pwm_init(PWM_CH1);
 	pwm_config(PWM_CH1, PWM_PSCAL_DIV, PWM_COUNT_US(LED_PWM_PERIOD, PWM_PSCAL_DIV), PWM_COUNT_US(volume, PWM_PSCAL_DIV));
 	pwm_enable(PWM_CH1, MASK_ENABLE);		
 }
 
+
+void led_breath_off(void)
+{
+    pwm_enable(PWM_CH1, MASK_DISABLE);
+    QN_SYSCON->PMCR1 &= ~(P24_PWM1_PIN_CTRL);
+    QN_SYSCON->PMCR1 |= P24_GPIO_20_PIN_CTRL;
+}
+#endif
 
 /**
  ****************************************************************************************

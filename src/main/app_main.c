@@ -43,6 +43,7 @@
 #include "spi.h"
 #include "sleep.h"
 #include "led.h"
+#include "usr_led.h"
 
 /*
  * LOCAL VARIABLES

@@ -611,7 +611,9 @@ const struct ke_msg_handler app_default_state[] =
 		
 	//tchip
 	{APP_TCHIP_TEST_TIMER,                  (ke_msg_func_t) app_tchip_test_timer_handler},
+#if (defined(LED_BREATH))
 	{APP_LED_BREATH,						(ke_msg_func_t) app_led_breath_handler},
+#endif
     {APP_KEY_ST,						(ke_msg_func_t) app_key_st_handler},
 		
 };
