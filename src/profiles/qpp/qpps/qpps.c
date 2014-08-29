@@ -64,6 +64,16 @@ const struct atts_desc qpps_att_db[QPPS_IDX_NB] =
     // User Descriptor
     [QPPS_IDX_RX_DATA_USER_DESP]   =   {ATT_DESC_CHAR_USER_DESCRIPTION, PERM(RD, ENABLE), sizeof("QPP Received Data"),
                                          sizeof("QPP Received Data"), "QPP Received Data"},
+                   
+    // Firmware Version Characteristic Declaration
+    [FIRMVARE_VERSION_DATA_CHAR]   =   {ATT_DECL_CHARACTERISTIC, PERM(RD, ENABLE), sizeof(firmware_version_data),
+                                         sizeof(firmware_version_data), (uint8_t *)&firmware_version_data},
+    // Firmware Version Characteristic Value
+    [FIRMVARE_VERSION_DATA_VAL]    =   {FIRMWARE_VERSION_DATA_UUID, PERM(RD, ENABLE), sizeof(CFG_FIRMWARE_VERSION),//QPP_DATA_MAX_LEN,
+                                         sizeof(CFG_FIRMWARE_VERSION), CFG_FIRMWARE_VERSION},
+    // User Descriptor
+    [FIRMVARE_VERSION_DATA_USER_DESP]   =   {ATT_DESC_CHAR_USER_DESCRIPTION, PERM(RD, ENABLE), sizeof("Firmware Version"),
+                                         sizeof("Firmware Version"), "Firmware Version"},
 
     // Tx data to client with these Characters
 
@@ -74,8 +84,8 @@ const struct atts_desc qpps_att_db[QPPS_IDX_NB] =
     [QPPS_IDX_VAL]                  =   {QPP_CHAR_VAL_UUID, PERM(NTF, ENABLE), QPP_DATA_MAX_LEN,
                                          0, NULL},
     // Client Characteristic Configuration Descriptor
-    [QPPS_IDX_VAL_NTF_CFG]          =   {ATT_DESC_CLIENT_CHAR_CFG, PERM(RD, ENABLE)|PERM(WR, ENABLE), sizeof(uint16_t),
-                                         0, NULL},
+    [QPPS_IDX_VAL_NTF_CFG]          =   {ATT_DESC_CLIENT_CHAR_CFG, PERM(RD, ENABLE)|PERM(WR, ENABLE), sizeof(uint16_t)},          
+    
 };
 
 /*
@@ -94,6 +104,11 @@ const struct atts_char_desc qpps_value_char = ATTS_CHAR(ATT_CHAR_PROP_NTF,
 const struct atts_char_desc qpps_char_rx_data = ATTS_CHAR(ATT_CHAR_PROP_WR | ATT_CHAR_PROP_WR_NO_RESP,
                                                           0,
                                                           QPP_CHAR_INPUT_DATA_UUID);
+/// RX data characteristic
+const struct atts_char_desc firmware_version_data = ATTS_CHAR(ATT_CHAR_PROP_RD,
+                                                          0,
+                                                          FIRMWARE_VERSION_DATA_UUID);
+
 
 /*
  * GLOBAL VARIABLE DEFINITIONS

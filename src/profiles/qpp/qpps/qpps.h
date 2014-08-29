@@ -42,7 +42,7 @@
  * DEFINES
  ****************************************************************************************
  */
-#define QPPS_MANDATORY_MASK             (0x000f)
+#define QPPS_MANDATORY_MASK             ((0x000f << 3) | 0x07)
 
 /*
  * MACROS
@@ -60,11 +60,16 @@ enum
     QPPS_IDX_RX_DATA_CHAR,
     QPPS_IDX_RX_DATA_VAL,
     QPPS_IDX_RX_DATA_USER_DESP,
-	
+    
+    FIRMVARE_VERSION_DATA_CHAR,
+    FIRMVARE_VERSION_DATA_VAL,
+    FIRMVARE_VERSION_DATA_USER_DESP,
+   
     QPPS_IDX_VAL_CHAR,
     QPPS_IDX_VAL,
     QPPS_IDX_VAL_NTF_CFG,
 
+    
     QPPS_IDX_NB,
 };
 
@@ -110,6 +115,7 @@ extern const atts_svc_desc_t qpps_svc;
 
 extern const struct atts_char_desc qpps_value_char;
 extern const struct atts_char_desc qpps_char_rx_data;
+extern const struct atts_char_desc firmware_version_data;
 
 extern struct qpps_env_tag qpps_env;
 extern unsigned int count_hab;

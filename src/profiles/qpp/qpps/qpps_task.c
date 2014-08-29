@@ -88,7 +88,7 @@ static int qpps_create_db_req_handler(ke_msg_id_t const msgid,
     uint64_t cfg_flag = QPPS_MANDATORY_MASK;
     //Database Creation Status
     uint8_t status;
-    uint8_t idx_nb = 4;
+    uint8_t idx_nb = 7;
 	uint8_t tx_char_num = param->tx_char_num;
     struct atts_desc *qpps_db = NULL;
     struct atts_char_desc *char_desc_def = NULL;
@@ -131,6 +131,7 @@ static int qpps_create_db_req_handler(ke_msg_id_t const msgid,
 	}
 	//QPRINTF("after while ,tx_char_num is %d,idx_nb is %d.\r\n",++tx_char_num,idx_nb);
     //Add Service Into Database
+    QPRINTF("--------------> %d : %d \r\n",sizeof(qpps_att_db)/sizeof(struct atts_desc),QPPS_IDX_NB);
     status = atts_svc_create_db(&qpps_env.shdl, (uint8_t *)&cfg_flag, idx_nb, NULL,
                                dest_id, (param->tx_char_num == 1 ? &qpps_att_db[0] : &qpps_db[0]));
 	//QPRINTF("qpps_db is %s,char_desc_def is %s\r\n",(qpps_db == NULL)? "NULL":"NONE NULL",(char_desc_def == NULL)? "NULL":"NONE NULL");

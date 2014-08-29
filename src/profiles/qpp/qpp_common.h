@@ -43,8 +43,9 @@
 
 enum
 {
-	QPP_CHAR_VAL_UUID 		  = 0xCD01,
-	QPP_CHAR_INPUT_DATA_UUID  = 0xCD20,
+	QPP_CHAR_VAL_UUID 		    = 0xCD01,
+	QPP_CHAR_INPUT_DATA_UUID    = 0xCD20,
+    FIRMWARE_VERSION_DATA_UUID  = 0xCD30,
 };
 
 // Derek, used as max data length
