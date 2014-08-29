@@ -2086,10 +2086,19 @@
       <name>$PROJ_DIR$\..\src\usr_bass.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\src\usr_button.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\src\usr_design.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\src\usr_led.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\src\usr_proxr.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\src\usr_task.c</name>
     </file>
   </group>
 </project>
