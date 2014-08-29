@@ -17,6 +17,9 @@
 
 // User configuration
 
+/// manufacturer info
+#define CFG_MANU_NAME   "tchip" 
+
 /// Chip version: CFG_9020_B2, CFG_9020_B1, CFG_9020_B0
 #define CFG_9020_B2
 

@@ -1151,6 +1151,7 @@ void app_enable_server_service(uint8_t enabled, uint16_t conhdl)
 uint8_t app_set_adv_data(uint16_t disc_mode)
 {
     uint8_t len;
+    uint8_t manu_length;
     /* "\x02\x01\x0?\x0C\x08Quintic BLE" */
     
     // Advertising data, BLE only, general discovery mode and short device name
@@ -1177,7 +1178,7 @@ uint8_t app_set_adv_data(uint16_t disc_mode)
     memcpy((char *)&app_env.adv_data[5], device_name.name, device_name.namelen);
     len = 5 + device_name.namelen;
 #else
-    nvds_tag_len_t name_length = 31 - 5; // The maximum length of Advertising data is 31 Octets
+    nvds_tag_len_t name_length = 31 - 5 - 8; // The maximum length of Advertising data is 31 Octets
 
     if (NVDS_OK != nvds_get(NVDS_TAG_DEVICE_NAME, &name_length, &app_env.adv_data[5]))
     {
@@ -1187,19 +1188,19 @@ uint8_t app_set_adv_data(uint16_t disc_mode)
     }
     else
     {
-#ifdef CFG_FORCE_RENAME
-        // NVDS is empty, use default name
-        name_length = strlen(QN_LOCAL_NAME);
-        strcpy((char *)&app_env.adv_data[5], QN_LOCAL_NAME);
-#else
         name_length--; // Discard '\0'
-#endif
     }
 
-    app_env.adv_data[3] = name_length + 1;
+    app_env.adv_data[3] = name_length + 1 ;
     app_env.adv_data[4] = GAP_AD_TYPE_SHORTENED_NAME;
     len = 5 + name_length;
 #endif
+    
+    manu_length = strlen(CFG_MANU_NAME);
+    strcpy((char *)&app_env.adv_data[len+2], CFG_MANU_NAME);
+    app_env.adv_data[len] = manu_length + 1;
+    app_env.adv_data[len+1] = GAP_AD_TYPE_MANU_SPECIFIC_DATA; /// manufacturer info.
+    len += manu_length + 2;
     
     return len;
 }
