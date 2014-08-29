@@ -25,3 +25,4 @@ prj_*/keil/*.bak
 prj_*/keil/*.c
 prj_*/keil/*.uvopt
 *.eww
+*.ewt
