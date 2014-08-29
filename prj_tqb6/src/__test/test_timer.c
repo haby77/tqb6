@@ -4,6 +4,7 @@
  ********************************/
 
 #include "test_timer.h"
+#include "usr_task.h"
 
 void app_tchip_send_package(tchip_frame_buff_t *data_frame_buff);
 
@@ -11,7 +12,7 @@ uint8_t tem_value = 'a';
 
 void stop_tchip_test_timer()
 {
-	ke_timer_clear(APP_TCHIP_TEST_TIMER, TASK_APP);
+	ke_timer_clear(USR_TCHIP_TEST_TIMER, TASK_USR);
 }
 
 void start_tchip_test_timer(void const *param)
@@ -21,14 +22,14 @@ void start_tchip_test_timer(void const *param)
 	stop_tchip_test_timer();
 	if (mparam->cfg_val == PRF_CLI_START_NTF)
 	{
-		ke_timer_set(APP_TCHIP_TEST_TIMER, TASK_APP, 100);
+		ke_timer_set(USR_TCHIP_TEST_TIMER, TASK_USR, 100);
 	}
 }
 
-int app_tchip_test_timer_handler(ke_msg_id_t const msgid, void const *param,
+int usr_tchip_test_timer_handler(ke_msg_id_t const msgid, void const *param,
                                ke_task_id_t const dest_id, ke_task_id_t const src_id)
 {
-    if(msgid == APP_TCHIP_TEST_TIMER)
+    if(msgid == USR_TCHIP_TEST_TIMER)
     {
         QPRINTF("helloworld \r\n");
         uint8_t str[] = "hi";
@@ -37,7 +38,7 @@ int app_tchip_test_timer_handler(ke_msg_id_t const msgid, void const *param,
         app_qpps_data_send(app_qpps_env->conhdl, 1, sizeof(str), str);
         
 			
-        ke_timer_set(APP_TCHIP_TEST_TIMER, TASK_APP, 100);
+        ke_timer_set(USR_TCHIP_TEST_TIMER, TASK_USR, 100);
     }
 
     return (KE_MSG_CONSUMED);

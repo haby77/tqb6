@@ -2,6 +2,7 @@
 #include "lib.h"
 #include "button.h"
 #include "sleep.h"
+#include "usr_task.h"
 
 
 /**
@@ -22,7 +23,7 @@ void app_event_button1_press_handler(void)
 #endif
 
     // delay 20ms to debounce
-    ke_timer_set(APP_KEY_ST,TASK_APP,APP_KEY_CHEAK_PRIOD);  
+    ke_timer_set(USR_KEY_ST,TASK_USR,APP_KEY_CHEAK_PRIOD);  
     ke_evt_clear(1UL << EVENT_BUTTON1_PRESS_ID);
 }
 

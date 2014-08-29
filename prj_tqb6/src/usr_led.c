@@ -27,6 +27,7 @@ void led_breath_off(void)
 }
 #endif
 
+#if (defined(LED_FLASH))
 /**
  ****************************************************************************************
  * @brief   Led 1 flash process
@@ -74,3 +75,6 @@ void usr_led1_set(uint16_t timer_on, uint16_t timer_off)
         ke_timer_set(APP_SYS_LED_1_TIMER, TASK_APP, timer_off);
     }
 }
+
+#endif
+

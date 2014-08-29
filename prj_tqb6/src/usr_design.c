@@ -39,6 +39,8 @@
 #include "sleep.h"
 #include "usr_led.h"
 #include "usr_button.h"
+#include "usr_task.h"
+#include "usr_led.h"
 
 
 /*
@@ -432,6 +434,10 @@ void usr_init(void)
     {
         ASSERT_ERR(0);
     }
+    
+    task_usr_desc_register();
+    
+    ke_state_set(TASK_USR, USR_DISABLE);
 
     
 #ifdef CFG_PRF_BASS
@@ -446,7 +452,7 @@ void usr_init(void)
 
 //t-chip
 #if (defined(LED_BREATH))
-int app_led_breath_handler(ke_msg_id_t const msgid, void const *param,
+int usr_led_breath_handler(ke_msg_id_t const msgid, void const *param,
                                ke_task_id_t const dest_id, ke_task_id_t const src_id)
 {
                 if (usr_env.led_breath_enable == LED_BREATH_ON)
@@ -454,24 +460,24 @@ int app_led_breath_handler(ke_msg_id_t const msgid, void const *param,
                     usr_env.vol++;
                     //QPRINTF("  0x%x  ",vol_breath[vol]);
                     led_breath_on(led_breath_array[usr_env.vol%32]);
-                    ke_timer_set(APP_LED_BREATH,TASK_APP,LED_MEG_PERIOD);
+                    ke_timer_set(USR_LED_BREATH,TASK_USR,LED_MEG_PERIOD);
                 }
                 else
                 {
                     led_breath_off();
                     led_set(1,LED_OFF);
-                    ke_timer_clear(APP_LED_BREATH,TASK_APP);
+                    ke_timer_clear(USR_LED_BREATH,TASK_USR);
                 }
 				return(KE_MSG_CONSUMED);
 }
 #endif
 
-int app_key_st_handler(ke_msg_id_t const msgid, void const *param,ke_task_id_t const dest_id, ke_task_id_t const src_id)
+int usr_key_st_handler(ke_msg_id_t const msgid, void const *param,ke_task_id_t const dest_id, ke_task_id_t const src_id)
 {
     if(!(check_button_state(BUTTON1_PIN)))  //press: 0  ;  idle:  1;
     {
         Button2_key_count++;
-        ke_timer_set(APP_KEY_ST,TASK_APP,10);
+        ke_timer_set(USR_KEY_ST,TASK_USR,10);
     }
     else
     {
@@ -496,9 +502,9 @@ int app_key_st_handler(ke_msg_id_t const msgid, void const *param,ke_task_id_t c
         }
         Button2_key_count = 0;
 #if (defined(LED_BREATH))
-        ke_timer_set(APP_LED_BREATH,TASK_APP,LED_MEG_PERIOD);
+        ke_timer_set(USR_LED_BREATH,TASK_USR,LED_MEG_PERIOD);
 #endif
-        ke_timer_clear(APP_KEY_ST,TASK_APP);
+        ke_timer_clear(USR_KEY_ST,TASK_USR);
     }  
     return(KE_MSG_CONSUMED);
 }
