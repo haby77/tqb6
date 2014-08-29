@@ -23,7 +23,7 @@ extern void led_breath_on(int volume);
 extern void led_breath_off(void);
 #endif
 
-#if (LED_FALSH)
+#if (defined(LED_FLASH))
 extern void usr_led1_set(uint16_t timer_on, uint16_t timer_off);
 extern void usr_led1_process(void);
 #endif
