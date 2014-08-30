@@ -59,6 +59,7 @@
 
 #define KEY_SHORT_GATE                    4
 #define KEY_LONG_GATE                     8
+#define KEY_ALERT_GATE                    50
 
 #define APP_HEART_RATE_MEASUREMENT_TO     1400 // 14s
 #define APP_HRPS_ENERGY_EXPENDED_STEP     50
@@ -71,9 +72,13 @@
 
 
 #define KEY_NO_LONG_PRESS           (true)
-#define KEY_LONG_PRESS            (false)
+#define KEY_LONG_PRESS              (false)
+
+#define KEY_NO_ALERT_PRESS          (true)
+#define KEY_ALERT_PRESS             (false)
 
 static  bool    KEY_LONG_PRESS_FLAG;     
+static bool     KEY_ALERT_FLAG = false;
 static  uint8_t Button2_key_count = 0;
 
 /*
@@ -364,9 +369,14 @@ int app_button_timer_handler(ke_msg_id_t const msgid, void const *param,
                     }//if APP_IDLE && KEY_LONG_PRESS && Server no working on,start adv.
                     else
                     {
+                        uint8_t cmd = 0x02;
                         QPRINTF("APP_SYS_BUTTON_1_TIMER\r\n");
-                        uint8_t cmd = 0x01;
-                        app_qpps_data_send(app_qpps_env->conhdl, 0, 1, &cmd);
+                        if (KEY_ALERT_FLAG == KEY_ALERT_PRESS)
+                        {
+                            cmd = 0x03;
+                        }
+                        QPRINTF("cmd is %d1\r\n",cmd);
+                            app_qpps_data_send(app_qpps_env->conhdl, 0, 1, &cmd);
                     }//if APP_IDLE && Server is working on,sent msg to alert.
                 }
                 else if(APP_ADV == ke_state_get(TASK_APP))
@@ -386,8 +396,8 @@ int app_button_timer_handler(ke_msg_id_t const msgid, void const *param,
                 QPRINTF("KEY_NO_LONG_PRESS\r\n");
                 if (APP_IDLE == ke_state_get(TASK_APP))
                 {
-                    uint8_t cmd = 0x01;
-                    app_qpps_data_send(app_qpps_env->conhdl, 1, 1, &cmd);
+                    uint8_t cmd = 0x10;
+                    app_qpps_data_send(app_qpps_env->conhdl, 0, 1, &cmd);
                 }
             }
     return (KE_MSG_CONSUMED);
@@ -494,6 +504,14 @@ int usr_key_st_handler(ke_msg_id_t const msgid, void const *param,ke_task_id_t c
             }
         if (Button2_key_count > KEY_LONG_GATE)
         {
+             if (Button2_key_count > KEY_ALERT_GATE)
+             {
+                 KEY_ALERT_FLAG = KEY_ALERT_PRESS;
+             }
+             else
+             {
+                 KEY_ALERT_FLAG = KEY_NO_ALERT_PRESS;       
+             }
              KEY_LONG_PRESS_FLAG = KEY_LONG_PRESS;
 #if (defined(LED_BREATH))
              usr_env.led_breath_enable = LED_BREATH_OFF;  
