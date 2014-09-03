@@ -26,6 +26,9 @@
 /// Chip version: CFG_9020_B2, CFG_9020_B1, CFG_9020_B0
 #define CFG_9020_B2
 
+/// CFG_9021_MINIDK
+#define CFG_9021_MINIDK
+
 /// Work mode: CFG_WM_SOC, CFG_WM_NP, CFG_WM_HCI
 #define CFG_WM_SOC
 
