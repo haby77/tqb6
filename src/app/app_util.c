@@ -889,6 +889,9 @@ void app_create_server_service_DB(void)
     app_qpps_env->tx_char_num = 1;
     app_qpps_create_db(app_qpps_env->tx_char_num);
 #endif
+#if BLE_BEACON_SERVER
+    app_beacon_create_db();
+#endif
 }
 #endif
 
@@ -1131,6 +1134,19 @@ void app_enable_server_service(uint8_t enabled, uint16_t conhdl)
         app_qpps_env->enabled = false;
     }
 #endif
+#if BLE_BEACON_SERVER
+    if (enabled == true)
+    {
+        app_beacon_env->conhdl = conhdl;
+        app_beacon_enable_req(conhdl, PERM_RIGHT_ENABLE, PRF_CON_NORMAL, 
+                            app_beacon_env->measured_power_val);
+        app_beacon_env->enabled = true;
+    }
+    else if (app_beacon_env->enabled == true)
+    {
+        app_beacon_env->enabled = false;
+    }
+#endif
 }
 #endif
 
@@ -1150,7 +1166,7 @@ void app_enable_server_service(uint8_t enabled, uint16_t conhdl)
 #if (BLE_PERIPHERAL)
 uint8_t app_set_adv_data(uint16_t disc_mode)
 {
-    uint8_t len;
+    uint8_t len=3;
     uint8_t manu_length;
     /* "\x02\x01\x0?\x0C\x08Quintic BLE" */
     
@@ -1172,13 +1188,47 @@ uint8_t app_set_adv_data(uint16_t disc_mode)
         /// Mode in non-discoverable
         app_env.adv_data[2] = 0x04;
     }
+#if (defined(CFG_IBEACON))
+    
+    uint8_t measured_power = 0xcd ; 
+    nvds_tag_len_t measured_power_len = 1;
+    if(NVDS_OK != nvds_get(NVDS_TAG_MEASURED_POWER, &measured_power_len, &measured_power))
+        measured_power = 0xcd ;
+    
+    uint8_t iBeacon[] =
+    {
+      /*Apple Pre-Amble*/
+      0x4C,
+      0x00,
+      0x02,
+      0x15,
+      /*Device UUID (16 Bytes)*/
+      0xE2, 0xC5, 0x6D, 0xB5, 0xDF, 0xFB, 0x48,0xD2, 0xB0, 0x60, 0xD0, 0xF5, 0xA7, 0x10, 0x96, 0xE0,
+      /*Major Value (2 Bytes)*/
+      0x00, 0x01,
+      
+      /*Minor Value (2 Bytes)*/
+      0x00,0x03,
+      
+      /*Measured Power*/
+      measured_power
+    };
+
+    manu_length = sizeof(iBeacon) / sizeof (uint8_t);
+    memcpy((char *)&app_env.adv_data[len+2], (char *)iBeacon,manu_length);
+    app_env.adv_data[len] = manu_length + 1;
+    app_env.adv_data[len+1] = GAP_AD_TYPE_MANU_SPECIFIC_DATA; /// manufacturer info.
+    len += manu_length + 2;
+    
+#else
+    
 #if (defined(CFG_EACI))
     app_env.adv_data[3] = device_name.namelen + 1;
     app_env.adv_data[4] = 0x09;
     memcpy((char *)&app_env.adv_data[5], device_name.name, device_name.namelen);
-    len = 5 + device_name.namelen;
+    len += 2 + device_name.namelen;
 #else
-    nvds_tag_len_t name_length = 31 - 5 - 8; // The maximum length of Advertising data is 31 Octets
+    nvds_tag_len_t name_length = 31 - 5; // The maximum length of Advertising data is 31 Octets
 
     if (NVDS_OK != nvds_get(NVDS_TAG_DEVICE_NAME, &name_length, &app_env.adv_data[5]))
     {
@@ -1193,7 +1243,7 @@ uint8_t app_set_adv_data(uint16_t disc_mode)
 
     app_env.adv_data[3] = name_length + 1 ;
     app_env.adv_data[4] = GAP_AD_TYPE_SHORTENED_NAME;
-    len = 5 + name_length;
+    len += 2 + name_length;
 #endif
     
     manu_length = strlen(CFG_MANU_NAME);
@@ -1201,6 +1251,8 @@ uint8_t app_set_adv_data(uint16_t disc_mode)
     app_env.adv_data[len] = manu_length + 1;
     app_env.adv_data[len+1] = GAP_AD_TYPE_MANU_SPECIFIC_DATA; /// manufacturer info.
     len += manu_length + 2;
+
+#endif
     
     return len;
 }

@@ -30,7 +30,6 @@
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
           <SFDFile></SFDFile>
-          <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
           <IncludePath></IncludePath>
@@ -98,7 +97,6 @@
           <StopOnExitCode>3</StopOnExitCode>
           <CustomArgument></CustomArgument>
           <IncludeLibraryModules></IncludeLibraryModules>
-          <ComprImg>1</ComprImg>
         </CommonProperty>
         <DllOption>
           <SimDllName>SARMCM3.DLL</SimDllName>
@@ -167,14 +165,9 @@
             <Capability>1</Capability>
             <DriverSelection>4099</DriverSelection>
           </Flash1>
-          <bUseTDR>1</bUseTDR>
           <Flash2>Segger\JL2CM3.dll</Flash2>
           <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
-          <pFcarmOut></pFcarmOut>
-          <pFcarmGrp></pFcarmGrp>
-          <pFcArmRoot></pFcArmRoot>
-          <FcArmLst>0</FcArmLst>
         </Utilities>
         <TargetArmAds>
           <ArmAdsMisc>
@@ -357,7 +350,7 @@
               <MiscControls>--C99</MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\src\fw;..\..\src\profiles;..\..\src\profiles\qpp;..\..\src\profiles\qpp\qpps;..\..\src\profiles\dis\diss;..\..\src\app;..\..\src\app\gap;..\..\src\app\gatt;..\..\src\app\smp;..\..\src\app\qpps;..\..\src\app\diss;..\..\src\cmsis;..\..\src\driver;..\..\src\lib;..\..\src\qnevb;..\src;..\src\__test;..\..\src\app\otas;..\..\src\profiles\ota\otas;..\..\src\app\proxr;..\..\src\profiles\prox\proxr;..\..\src\profiles\bas\bass;..\..\src\app\bass</IncludePath>
+              <IncludePath>..\..\src\fw;..\..\src\profiles;..\..\src\profiles\qpp;..\..\src\profiles\qpp\qpps;..\..\src\profiles\dis\diss;..\..\src\app;..\..\src\app\gap;..\..\src\app\gatt;..\..\src\app\smp;..\..\src\app\qpps;..\..\src\app\diss;..\..\src\cmsis;..\..\src\driver;..\..\src\lib;..\..\src\qnevb;..\src;..\src\__test;..\..\src\app\otas;..\..\src\profiles\ota\otas;..\..\src\app\proxr;..\..\src\profiles\prox\proxr;..\..\src\profiles\bas\bass;..\..\src\app\bass;..\..\src\profiles\beacon;..\..\src\app\beacon</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -565,6 +558,16 @@
               <FileType>1</FileType>
               <FilePath>..\..\src\app\bass\app_bass_task.c</FilePath>
             </File>
+            <File>
+              <FileName>app_beacon.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\app\beacon\app_beacon.c</FilePath>
+            </File>
+            <File>
+              <FileName>app_beacon_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\app\beacon\app_beacon_task.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -614,6 +617,16 @@
               <FileName>bass_task.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\profiles\bas\bass\bass_task.c</FilePath>
+            </File>
+            <File>
+              <FileName>beacon.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\profiles\beacon\beacon.c</FilePath>
+            </File>
+            <File>
+              <FileName>beacon_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\profiles\beacon\beacon_task.c</FilePath>
             </File>
           </Files>
         </Group>

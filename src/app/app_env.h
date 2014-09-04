@@ -160,6 +160,11 @@
 #include "app_eapi.h"
 #endif
 
+#if BLE_BEACON_SERVER
+#include "app_beacon.h"
+#include "app_beacon_task.h"
+#endif
+
 /*
  * TYPE DEFINITIONS
  ****************************************************************************************
@@ -430,6 +435,10 @@ struct app_env_tag
 
 #if BLE_QPP_SERVER
     struct app_qpps_env_tag qpps_ev;
+#endif
+
+#if BLE_BEACON_SERVER
+    struct app_beacon_env_tag beacon_ev;
 #endif
 
 #if QN_DEMO_MENU

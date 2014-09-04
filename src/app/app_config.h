@@ -656,6 +656,16 @@
         #define BLE_OTA_SERVER      0
         #define OTAS_DB_SIZE        0
     #endif // defined(CFG_PRF_OTAS)
+    
+    ///iBeacon Service Server Role
+    #if defined(CFG_PRF_BEACON)
+        #define BLE_BEACON_SERVER     1
+        #define TASK_BEACON           CFG_TASK_BEACON
+        #define BEACON_DB_SIZE        (96*2) // the size of every instance is 95
+    #else
+        #define BLE_BEACON_SERVER     0
+        #define BEACON_DB_SIZE        0
+    #endif // defined(CFG_PRF_BEACON)    
 
     //Force ATT parts depending on profile roles or compile options
     /// Attribute Client

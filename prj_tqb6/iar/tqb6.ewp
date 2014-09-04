@@ -324,6 +324,8 @@
           <state>$PROJ_DIR$\..\..\src\profiles\ota\otas</state>
           <state>$PROJ_DIR$\..\..\src\profiles\prox\proxr</state>
           <state>$PROJ_DIR$\..\src\__test</state>
+          <state>$PROJ_DIR$\..\..\src\app\beacon</state>
+          <state>$PROJ_DIR$\..\..\src\profiles\beacon</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1915,6 +1917,12 @@
       <name>$PROJ_DIR$\..\..\src\app\bass\app_bass_task.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\src\app\beacon\app_beacon.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\app\beacon\app_beacon_task.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\src\app\diss\app_diss.c</name>
     </file>
     <file>
@@ -2027,6 +2035,12 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\src\profiles\bas\bass\bass_task.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\profiles\beacon\beacon.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\profiles\beacon\beacon_task.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\src\profiles\dis\diss\diss.c</name>

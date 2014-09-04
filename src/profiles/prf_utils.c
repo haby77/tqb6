@@ -208,6 +208,11 @@
 #if (BLE_OTA_SERVER)
 #include "otas_task.h"
 #endif // (BLE_OTA_SERVER)
+
+#if (BLE_BEACON_SERVER)
+#include "beacon.h"
+#include "beacon_task.h"
+#endif // (BLE_CSC_SENSOR)
  
 #endif /* (BLE_ATTS || BLE_ATTC) */
 /*
@@ -1430,6 +1435,10 @@ void prf_init(void)
     #if (BLE_CSC_SENSOR)
     cscps_init();
     #endif // (BLE_CSC_SENSOR)
+    
+    #if (BLE_BEACON_SERVER)
+    beacon_init();
+    #endif
 
     #if (BLE_OTA_SERVER)
     if(OTA_STATUS_OK != otas_init(OTAS_FW2_ADDRESS, OTA_ENABLE_ENCRYPT, OTAS_DECRYPT_KEY))

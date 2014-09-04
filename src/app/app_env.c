@@ -85,6 +85,24 @@ static void app_bass_init(void)
 
 /*
  ****************************************************************************************
+ * @brief Initiate the beacon service server enviroment - at initiation
+ *
+ ****************************************************************************************
+ */
+#if BLE_BEACON_SERVER
+static void app_beacon_init(void)
+{
+    uint8_t measured_power = 0xcd ; 
+    nvds_tag_len_t len = 1;
+    if(NVDS_OK != nvds_get(NVDS_TAG_MEASURED_POWER, &len, &measured_power))
+        measured_power = 0xcd ;
+    app_beacon_env->measured_power_val = measured_power;
+    app_beacon_env->conhdl = 0xFFFF;
+}
+#endif
+
+/*
+ ****************************************************************************************
  * @brief Initiate blood pressure service enviroment   *//**
  * @description
  *  Initiate blood pressure service enviroment.
@@ -450,6 +468,9 @@ void app_init(void)
 #endif
 #if (QN_WORK_MODE != WORK_MODE_SOC)
     app_gap_reset_req();
+#endif
+#if BLE_BEACON_SERVER
+    app_beacon_init();
 #endif
 }
 

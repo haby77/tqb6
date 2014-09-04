@@ -607,6 +607,10 @@ const struct ke_msg_handler app_default_state[] =
     
 #if BLE_OTA_SERVER 
     {OTAS_TRANSIMIT_STATUS_IND,             (ke_msg_func_t) app_otas_start_handler},
+#endif  
+
+#if BLE_BEACON_SERVER
+    {BEACON_CREATE_DB_CFM,                  (ke_msg_func_t) app_beacon_create_db_cfm_handler},  
 #endif    
 	
 };
