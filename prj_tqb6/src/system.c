@@ -63,18 +63,10 @@ static void SystemIOCfg(void)
                              | P21_GPIO_17_PIN_CTRL
                              | P22_GPIO_18_PIN_CTRL
                              | P23_GPIO_19_PIN_CTRL
-#if (defined(QN_9021_MINIDK))
-                             | P24_PWM1_PIN_CTRL
-                             | P25_GPIO_21_PIN_CTRL
-                             | P26_GPIO_22_PIN_CTRL
-#else
                              | P24_GPIO_20_PIN_CTRL
                              | P25_GPIO_21_PIN_CTRL
-                             | P26_PWM1_PIN_CTRL
-#endif
-                             
-                             | P27_GPIO_23_PIN_CTRL
-
+                             | P26_GPIO_22_PIN_CTRL
+                             | P27_PWM0_PIN_CTRL
                              | P30_GPIO_24_PIN_CTRL
                              | P31_GPIO_25_PIN_CTRL
 #if (defined(CFG_HCI_SPI))                             

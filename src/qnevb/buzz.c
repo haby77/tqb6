@@ -39,9 +39,9 @@
  */
 void buzzer_on(enum buzz_vol volume)
 {
-    pwm_init(PWM_CH1);
-    pwm_config(PWM_CH1, PWM_PSCAL_DIV, PWM_COUNT_US(BUZZ_PWM_PERIOD, PWM_PSCAL_DIV), PWM_COUNT_US(volume, PWM_PSCAL_DIV));
-    pwm_enable(PWM_CH1, MASK_ENABLE);
+    pwm_init(PWM_CH0);
+    pwm_config(PWM_CH0, PWM_PSCAL_DIV, PWM_COUNT_US(BUZZ_PWM_PERIOD, PWM_PSCAL_DIV), PWM_COUNT_US(volume, PWM_PSCAL_DIV));
+    pwm_enable(PWM_CH0, MASK_ENABLE);
 }
 
 /**
@@ -51,7 +51,7 @@ void buzzer_on(enum buzz_vol volume)
  */
 void buzzer_off(void)
 {
-    pwm_enable(PWM_CH1, MASK_DISABLE);
+    pwm_enable(PWM_CH0, MASK_DISABLE);
 }
 
 /// @} BUZZ

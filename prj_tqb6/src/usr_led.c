@@ -11,8 +11,8 @@ uint8_t led_breath_array[] = {25,50,74,97,120,142,162,181,197,212,225,236,245,25
 
 void led_breath_on(int volume)
 {
-    QN_SYSCON->PMCR1 &= ~(P24_GPIO_20_PIN_CTRL);
-    QN_SYSCON->PMCR1 |= P24_PWM1_PIN_CTRL;
+    QN_SYSCON->PMCR1 &= ~(P26_GPIO_22_PIN_CTRL);
+    QN_SYSCON->PMCR1 |= P26_PWM1_PIN_CTRL;
     pwm_init(PWM_CH1);
 	pwm_config(PWM_CH1, PWM_PSCAL_DIV, PWM_COUNT_US(LED_PWM_PERIOD, PWM_PSCAL_DIV), PWM_COUNT_US(volume, PWM_PSCAL_DIV));
 	pwm_enable(PWM_CH1, MASK_ENABLE);		
@@ -22,8 +22,8 @@ void led_breath_on(int volume)
 void led_breath_off(void)
 {
     pwm_enable(PWM_CH1, MASK_DISABLE);
-    QN_SYSCON->PMCR1 &= ~(P24_PWM1_PIN_CTRL);
-    QN_SYSCON->PMCR1 |= P24_GPIO_20_PIN_CTRL;
+    QN_SYSCON->PMCR1 &= ~(P26_PWM1_PIN_CTRL);
+    QN_SYSCON->PMCR1 |= P26_GPIO_22_PIN_CTRL;
 }
 #endif
 
