@@ -101,7 +101,7 @@
 #define CFG_DBG_INFO
 /// LED breath function
 //t-chip
-#define CFG_LED_BREATH
+//#define CFG_LED_BREATH
 
 /// Maximum connection number
 #define CFG_CON 1

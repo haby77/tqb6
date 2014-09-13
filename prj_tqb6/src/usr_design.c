@@ -51,9 +51,9 @@
 #define LED_ON_DUR_ADV_FAST        2
 #define LED_OFF_DUR_ADV_FAST       (uint16_t)((GAP_ADV_FAST_INTV2*0.625)/10)
 #define LED_ON_DUR_ADV_SLOW        2
-#define LED_OFF_DUR_ADV_SLOW       (uint16_t)((GAP_ADV_SLOW_INTV*0.625)/10)
-#define LED_ON_DUR_CON          0xffff
-#define LED_OFF_DUR_CON                   0
+#define LED_OFF_DUR_ADV_SLOW       (uint16_t)((GAP_ADV_SLOW_INTV*0.625))
+#define LED_ON_DUR_CON             2
+#define LED_OFF_DUR_CON                   1000
 #define LED_ON_DUR_IDLE                   0
 #define LED_OFF_DUR_IDLE                  0xffff
 
@@ -128,7 +128,7 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
             if(APP_IDLE == ke_state_get(TASK_APP))
             {
                 usr_led1_set(LED_ON_DUR_ADV_FAST, LED_OFF_DUR_ADV_FAST);
-                ke_timer_set(APP_ADV_INTV_UPDATE_TIMER, TASK_APP, 30 * 100);
+                ke_timer_set(APP_ADV_STOP_TIMER, TASK_APP, 10 * 100);
 #if (defined(QN_ADV_WDT))
                 usr_env.adv_wdt_enable = true;
 #endif
@@ -248,6 +248,23 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
             break;
     }
 }
+
+/*******************************************************************************************
+
+
+
+
+
+
+********************************************************************************************/
+int app_gap_adv_sotp_timer_handler(ke_msg_id_t const msgid, void const *param,
+                               ke_task_id_t const dest_id, ke_task_id_t const src_id)
+{
+    app_gap_adv_stop_req();
+    return(KE_MSG_CONSUMED);
+}
+
+
 
 /**
  ****************************************************************************************
@@ -375,7 +392,7 @@ int app_button_timer_handler(ke_msg_id_t const msgid, void const *param,
                         {
                             cmd = 0x03;
                         }
-                        QPRINTF("cmd is %d1\r\n",cmd);
+                        QPRINTF("cmd is %d\r\n",cmd);
                             app_qpps_data_send(app_qpps_env->conhdl, 0, 1, &cmd);
                     }//if APP_IDLE && Server is working on,sent msg to alert.
                 }

@@ -191,6 +191,7 @@ const struct ke_msg_handler app_default_state[] =
     {APP_SYS_LED_2_TIMER,                   (ke_msg_func_t) app_led_timer_handler},
 #if (BLE_PERIPHERAL)
     {APP_ADV_INTV_UPDATE_TIMER,             (ke_msg_func_t) app_gap_adv_intv_update_timer_handler},
+    {APP_ADV_STOP_TIMER,                    (ke_msg_func_t) app_gap_adv_sotp_timer_handler},     
 #endif
     {APP_SYS_BUTTON_1_TIMER,                (ke_msg_func_t) app_button_timer_handler},
 #endif

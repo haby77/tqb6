@@ -75,6 +75,7 @@ extern struct usr_env_tag usr_env;
 extern void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param);
 extern int app_led_timer_handler(ke_msg_id_t const msgid, void const *param, ke_task_id_t const dest_id, ke_task_id_t const src_id);
 extern int app_gap_adv_intv_update_timer_handler(ke_msg_id_t const msgid, void const *param, ke_task_id_t const dest_id, ke_task_id_t const src_id);
+extern int app_gap_adv_sotp_timer_handler(ke_msg_id_t const msgid, void const *param,ke_task_id_t const dest_id, ke_task_id_t const src_id);
 extern void usr_sleep_restore(void);
 extern void usr_button1_cb(void);
 extern int app_button_timer_handler(ke_msg_id_t const msgid, void const *param, ke_task_id_t const dest_id, ke_task_id_t const src_id);
