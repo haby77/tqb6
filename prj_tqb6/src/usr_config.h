@@ -24,7 +24,7 @@
 #define CFG_MANU_NAME   "tchip" 
 
 /// ibeacon
-#define CFG_IBEACON
+//#define CFG_IBEACON
 
 /// Chip version: CFG_9020_B2, CFG_9020_B1, CFG_9020_B0
 #define CFG_9020_B2
@@ -242,8 +242,8 @@
 #define CFG_TASK_OTAS   TASK_PRF7
 
 /// iBeacon 
-#define CFG_PRF_BEACON
-#define CFG_TASK_BEACON  TASK_PRF4
+// #define CFG_PRF_BEACON
+// #define CFG_TASK_BEACON  TASK_PRF4
 
 #endif
 
