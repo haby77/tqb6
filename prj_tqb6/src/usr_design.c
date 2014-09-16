@@ -128,7 +128,7 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
             if(APP_IDLE == ke_state_get(TASK_APP))
             {
                 usr_led1_set(LED_ON_DUR_ADV_FAST, LED_OFF_DUR_ADV_FAST);
-                ke_timer_set(APP_ADV_STOP_TIMER, TASK_APP, 10 * 100);
+                ke_timer_set(APP_ADV_STOP_TIMER, TASK_APP, 30 * 100);
 #if (defined(QN_ADV_WDT))
                 usr_env.adv_wdt_enable = true;
 #endif
@@ -148,8 +148,9 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
             break;
 
         case GAP_DISCON_CMP_EVT:
+        {
             usr_led1_set(LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE);
-				
+			usr_buzz_process(BUZZER_INTER_ON);	
 			//tchip
 			stop_tchip_test_timer();//Í£Ö¹¶¨Ê±Æ÷
         
@@ -157,12 +158,14 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
             ke_timer_clear(APP_BASS_BATT_LEVEL_TIMER, TASK_APP);
 #endif
 
+
             // start adv
             app_gap_adv_start_req(GAP_GEN_DISCOVERABLE|GAP_UND_CONNECTABLE,
                     app_env.adv_data, app_set_adv_data(GAP_GEN_DISCOVERABLE),
                     app_env.scanrsp_data, app_set_scan_rsp_data(app_get_local_service_flag()),
                     GAP_ADV_FAST_INTV1, GAP_ADV_FAST_INTV2);
             break;
+        }
 
         case GAP_LE_CREATE_CONN_REQ_CMP_EVT:
             if(((struct gap_le_create_conn_req_cmp_evt *)param)->conn_info.status == CO_ERROR_NO_ERROR)
@@ -190,6 +193,7 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
                         conn_par.time_out = IOS_STO_MULT;
                         app_gap_param_update_req(((struct gap_le_create_conn_req_cmp_evt *)param)->conn_info.conhdl, &conn_par);
                     }
+                    usr_buzz_process(BUZZER_INTER_OFF);
                 }
             }
 #ifdef CFG_PRF_BASS  
@@ -298,6 +302,26 @@ int app_led_timer_handler(ke_msg_id_t const msgid, void const *param,
     return (KE_MSG_CONSUMED);
 }
 
+
+/****************************************************************************************
+ * @brief Handles BUZZ status timer.
+ *
+ * @param[in] msgid      APP_SYS_UART_DATA_IND
+ * @param[in] param      Pointer to struct app_uart_data_ind
+ * @param[in] dest_id    TASK_APP
+ * @param[in] src_id     TASK_APP
+ *
+ * @return If the message was consumed or not.
+ ****************************************************************************************
+ */
+int app_buzz_timer_handler(ke_msg_id_t const msgid, void const *param,
+                               ke_task_id_t const dest_id, ke_task_id_t const src_id)
+{
+        
+        usr_buzz_process(BUZZER_INTER_ON);
+        return (KE_MSG_CONSUMED);
+}
+
 /**
  ****************************************************************************************
  * @brief Handles advertising mode timer event.
@@ -392,8 +416,9 @@ int app_button_timer_handler(ke_msg_id_t const msgid, void const *param,
                         {
                             cmd = 0x03;
                         }
-                        QPRINTF("cmd is %d\r\n",cmd);
+                            QPRINTF("cmd is %d\r\n",cmd);
                             app_qpps_data_send(app_qpps_env->conhdl, 0, 1, &cmd);
+                            
                     }//if APP_IDLE && Server is working on,sent msg to alert.
                 }
                 else if(APP_ADV == ke_state_get(TASK_APP))
@@ -407,6 +432,11 @@ int app_button_timer_handler(ke_msg_id_t const msgid, void const *param,
                     sleep_set_pm(PM_DEEP_SLEEP);
 #endif
                 }//if APP_ADV ,stop ADV and sleep.
+                if (KEY_ALERT_FLAG == KEY_ALERT_PRESS)
+                {
+                    QPRINTF("KEY_ALERT_PRESS!\r\n");
+                    usr_buzz_process(BUZZER_INTER_OFF);
+                }
             }
             else
             {

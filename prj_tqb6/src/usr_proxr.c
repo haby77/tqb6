@@ -16,16 +16,18 @@ void usr_proxr_alert(struct proxr_alert_ind *param)
         if(param->alert_lvl == 2)
         {
             buzzer_on(BUZZ_VOL_HIGH);
-            ke_timer_set(APP_PROXR_ALERT_STOP_TIMER, TASK_APP, 500);    // 5 seconds
+            ke_timer_set(APP_SYS_BUZZ_TIMER, TASK_APP, BUZZ_ALERT_PERIOD);    // 5 seconds
         }
         else if(param->alert_lvl == 1)
         {
-            buzzer_on(BUZZ_VOL_LOW);
-            ke_timer_set(APP_PROXR_ALERT_STOP_TIMER, TASK_APP, 500);    // 5 seconds
+            buzzer_on(BUZZ_VOL_HIGH);
+            //ke_timer_set(APP_PROXR_ALERT_STOP_TIMER,TASK_APP,500);
+            ke_timer_set(APP_SYS_BUZZ_TIMER, TASK_APP, BUZZ_ALERT_PERIOD);    // 5 seconds
         }
         else
         {
             buzzer_off();
+            ke_timer_clear(APP_SYS_BUZZ_TIMER, TASK_APP);
             ke_timer_clear(APP_PROXR_ALERT_STOP_TIMER, TASK_APP);
         }
     }

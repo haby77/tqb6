@@ -25,6 +25,7 @@
  */
 #include "pwm.h"
 #include "buzz.h"
+#include "usr_task.h"
 
 /*
  * FUNCTION DEFINITIONS
@@ -54,19 +55,26 @@ void buzzer_off(void)
     pwm_enable(PWM_CH0, MASK_DISABLE);
 }
 
-void usr_buzz_process(void)
+void usr_buzz_process(uint8_t enable)
 {
-    if(pwm_pwm_GetCR(QN_PWM) & PWM_CH0)
+    if (enable == BUZZER_INTER_ON)
     {
-        buzzer_off();
-        ke_timer_set(APP_SYS_BUZZ_TIMER, TASK_APP,BUZZ_ALERT_PERIOD);
-    }
-    else
-    {
+        if(pwm_pwm_GetCR(QN_PWM) & PWM_CH0)
+        {
+            buzzer_off();
+        }
+        else
+        {
         
-        buzzer_on(BUZZ_VOL_HIGH);
+            buzzer_on(BUZZ_VOL_HIGH);         
+        }
         ke_timer_set(APP_SYS_BUZZ_TIMER, TASK_APP,BUZZ_ALERT_PERIOD);
     }
+     if (enable == BUZZER_INTER_OFF)
+     {
+        buzzer_off();
+        ke_timer_clear(APP_SYS_BUZZ_TIMER, TASK_APP);
+     }
 }
 
 /// @} BUZZ

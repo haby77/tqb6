@@ -26,3 +26,4 @@ prj_*/keil/*.c
 prj_*/keil/*.uvopt
 *.eww
 *.ewt
+/prj_tqb6/nvds/tqb6_001.nvds
