@@ -39,6 +39,6 @@ enum buzz_vol
 
 extern void buzzer_on(enum buzz_vol volume);
 extern void buzzer_off(void);
-
+extern void usr_buzz_process(void);
 
 #endif

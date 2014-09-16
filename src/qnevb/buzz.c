@@ -54,4 +54,19 @@ void buzzer_off(void)
     pwm_enable(PWM_CH0, MASK_DISABLE);
 }
 
+void usr_buzz_process(void)
+{
+    if(pwm_pwm_GetCR(QN_PWM) & PWM_CH0)
+    {
+        buzzer_off();
+        ke_timer_set(APP_SYS_BUZZ_TIMER, TASK_APP,BUZZ_ALERT_PERIOD);
+    }
+    else
+    {
+        
+        buzzer_on(BUZZ_VOL_HIGH);
+        ke_timer_set(APP_SYS_BUZZ_TIMER, TASK_APP,BUZZ_ALERT_PERIOD);
+    }
+}
+
 /// @} BUZZ

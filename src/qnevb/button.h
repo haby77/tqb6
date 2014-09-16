@@ -26,7 +26,6 @@
 #else
 
 #define BUTTON1_PIN    (GPIO_P10)
-#define BUTTON2_PIN    (GPIO_P12)
 
 #endif
 

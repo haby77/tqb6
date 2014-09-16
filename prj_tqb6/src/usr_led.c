@@ -7,12 +7,12 @@
 //t-chip
 #if (defined(LED_BREATH))
 uint8_t led_breath_array[] = {25,50,74,97,120,142,162,181,197,212,225,236,245,251,254,255,254,
-                              251,244,236,225,212,197,181,162,142,120,97,74,50,25,0};
+                              251,244,236,225,212,197,181,162,142,120,97,74,50,25,0};//the sin(x) array for LED_BREATH
 
 void led_breath_on(int volume)
 {
-    QN_SYSCON->PMCR1 &= ~(P26_GPIO_22_PIN_CTRL);
-    QN_SYSCON->PMCR1 |= P26_PWM1_PIN_CTRL;
+    QN_SYSCON->PMCR1 &= ~(P26_MASK_PIN_CTRL);
+    QN_SYSCON->PMCR1 |= P26_PWM1_PIN_CTRL;//open the LED_BREATH need config P26 to PWM_CH1
     pwm_init(PWM_CH1);
 	pwm_config(PWM_CH1, PWM_PSCAL_DIV, PWM_COUNT_US(LED_PWM_PERIOD, PWM_PSCAL_DIV), PWM_COUNT_US(volume, PWM_PSCAL_DIV));
 	pwm_enable(PWM_CH1, MASK_ENABLE);		
@@ -22,7 +22,7 @@ void led_breath_on(int volume)
 void led_breath_off(void)
 {
     pwm_enable(PWM_CH1, MASK_DISABLE);
-    QN_SYSCON->PMCR1 &= ~(P26_PWM1_PIN_CTRL);
+    QN_SYSCON->PMCR1 &= ~(P26_MASK_PIN_CTRL);//close LED_BREATH to config P26 reback.
     QN_SYSCON->PMCR1 |= P26_GPIO_22_PIN_CTRL;
 }
 #endif
