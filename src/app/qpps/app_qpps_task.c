@@ -169,8 +169,6 @@ int app_qpps_data_send_cfm_handler(ke_msg_id_t const msgid,
         {
             app_test_send_data(app_qpps_env->tx_char_num - 1);
         }
-		//add by wengbj
-		app_task_msg_hdl(msgid, param);
     }
     else
     {
@@ -207,7 +205,7 @@ int app_qpps_cfg_indntf_ind_handler(ke_msg_id_t const msgid,
         {
             app_qpps_env->features |= (QPPS_VALUE_NTF_CFG << param->char_index);
             // App send data if all of characteristic have been configured
-            if (get_bit_num(app_qpps_env->features) == QPPS_VAL_CHAR_NUM)
+            if (get_bit_num(app_qpps_env->features) == app_qpps_env->tx_char_num)
             {
                 app_qpps_env->char_status = app_qpps_env->features;
                 app_test_send_data(app_qpps_env->tx_char_num - 1);
@@ -218,8 +216,6 @@ int app_qpps_cfg_indntf_ind_handler(ke_msg_id_t const msgid,
             app_qpps_env->features &= ~(QPPS_VALUE_NTF_CFG << param->char_index);
             app_qpps_env->char_status &= ~(QPPS_VALUE_NTF_CFG << param->char_index);
         }
-		//add by wengbj
-		app_task_msg_hdl(msgid, param);
     }
 
     return (KE_MSG_CONSUMED);
@@ -248,8 +244,6 @@ int app_qpps_data_ind_handler(ke_msg_id_t const msgid,
     if (param->length > 0)
     {
         QPRINTF("len=%d, I%02X", param->length, param->data[0]);
-		//add by wengbj
-		app_task_msg_hdl(msgid, param);
     }
     QPRINTF("\r\n");
 
@@ -267,7 +261,6 @@ int app_qpps_data_ind_handler(ke_msg_id_t const msgid,
  */
 static void app_test_send_data(uint8_t max)
 {
-#if 0
     uint8_t cnt;
 
     for (cnt = 0; (max != 0) && cnt < app_qpps_env->tx_char_num; cnt++)
@@ -285,7 +278,6 @@ static void app_test_send_data(uint8_t max)
             app_qpps_data_send(app_qpps_env->conhdl, cnt, sizeof(val), val);
         }
     }
-#endif
 }
 
 /// @endcond

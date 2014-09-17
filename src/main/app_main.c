@@ -168,7 +168,7 @@ int main(void)
 #endif
 
     usr_init();
-   
+
     sleep_init();
     wakeup_by_sleep_timer(__32K_TYPE);
 

@@ -145,7 +145,7 @@ __vector_table_0x1c
         DCD     0                         ; 28:  Reserved
         DCD     TUNER_RX_IRQHandler       ; 29:  RF RX Setting
         DCD     TUNER_TX_IRQHandler       ; 30:  RF TX Setting
-        DCD     TUNER_SETTING_IRQHandler  ; 31:  Reserved
+        DCD     TUNER_SETTING_IRQHandler  ; 31:  RF Setting
 
 #endif
 
@@ -165,10 +165,10 @@ Reset_Handler
         LDR       R2, = REMAP_BIT
         ORRS      R0, R0, R2
         STR       R0, [R1]
-        
+
         LDR     R0, = sfe(CSTACK)
         MSR     MSP, R0
-        
+
         LDR     R0, = __iar_program_start
         BX      R0
 
@@ -223,7 +223,7 @@ BusFault_Handler
         B BusFault_Handler
 UsageFault_Handler
         B UsageFault_Handler
-        
+
 SVC_Handler
 DebugMon_Handler
 PendSV_Handler

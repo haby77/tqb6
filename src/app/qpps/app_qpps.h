@@ -15,8 +15,6 @@
 #ifndef APP_QPPS_H_
 #define APP_QPPS_H_
 
-#define QPPS_VAL_CHAR_NUM	  (1)
-
 /**
  ****************************************************************************************
  * @addtogroup APP_QPPS_API Quintic Private Profile Server

@@ -655,25 +655,25 @@ void app_gap_adv_start_req(uint16_t mode, uint8_t *adv_data, uint8_t adv_data_le
     struct gap_set_mode_req *msg = KE_MSG_ALLOC(GAP_SET_MODE_REQ, TASK_GAP, TASK_APP,
                                                 gap_set_mode_req);
 
-	msg->mode = mode;
-	if (mode & GAP_UND_CONNECTABLE)
-	{
-		/* Mode in undirected connectable */
-		///Advertising type
-		msg->adv_info.adv_param.adv_type = ADV_CONN_UNDIR;
-	}
+    msg->mode = mode;
+    if (mode & GAP_UND_CONNECTABLE)
+    {
+        /* Mode in undirected connectable */
+        ///Advertising type
+        msg->adv_info.adv_param.adv_type = ADV_CONN_UNDIR;
+    }
     else if (mode & GAP_DIR_CONNECTABLE)
     {
-		/* Mode in directed connectable */
-		///Advertising type
-		msg->adv_info.adv_param.adv_type = ADV_CONN_DIR;
+        /* Mode in directed connectable */
+        ///Advertising type
+        msg->adv_info.adv_param.adv_type = ADV_CONN_DIR;
     }
     else
     {
-		/* Mode in non-connectable */
-		///Advertising type
-		msg->adv_info.adv_param.adv_type = 
-			(mode & GAP_NON_DISCOVERABLE) ? ADV_NONCONN_UNDIR : ADV_DISC_UNDIR;
+        /* Mode in non-connectable */
+        ///Advertising type
+        msg->adv_info.adv_param.adv_type = 
+            (mode & GAP_NON_DISCOVERABLE) ? ADV_NONCONN_UNDIR : ADV_DISC_UNDIR;
     }
 
     ///Minimum interval for advertising
@@ -681,9 +681,9 @@ void app_gap_adv_start_req(uint16_t mode, uint8_t *adv_data, uint8_t adv_data_le
     ///Maximum interval for advertising
     msg->adv_info.adv_param.adv_intv_max = adv_intv_max;
     /// Own address type: public=0x00 /random = 0x01
-	msg->adv_info.adv_param.own_addr_type = QN_ADDR_TYPE;
-	/// Advertising channel map
-	msg->adv_info.adv_param.adv_chnl_map = ADV_ALL_CHNLS_EN;
+    msg->adv_info.adv_param.own_addr_type = QN_ADDR_TYPE;
+    /// Advertising channel map
+    msg->adv_info.adv_param.adv_chnl_map = ADV_ALL_CHNLS_EN;
     /// Advertising filter policy
     msg->adv_info.adv_param.adv_filt_policy = 0;
 
@@ -695,7 +695,7 @@ void app_gap_adv_start_req(uint16_t mode, uint8_t *adv_data, uint8_t adv_data_le
     msg->adv_info.scan_rsp_data.scan_rsp_data_len = scan_rsp_data_len;
     if (scan_rsp_data)
         memcpy(&msg->adv_info.scan_rsp_data.data, scan_rsp_data, scan_rsp_data_len);
-	
+    
     // Send the message
     ke_msg_send(msg);
 }

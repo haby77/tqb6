@@ -213,6 +213,10 @@
 #include "beacon.h"
 #include "beacon_task.h"
 #endif // (BLE_CSC_SENSOR)
+
+#if (BLE_ANCS_NC)
+#include "ancsc_task.h"
+#endif // (BLE_ANCS_NC)
  
 #endif /* (BLE_ATTS || BLE_ATTC) */
 /*
@@ -364,6 +368,31 @@ void prf_unregister_atthdl2gatt(struct prf_con_info* con_info, struct prf_svc *s
     }
 }
 
+#if (BLE_QPP_CLIENT)
+void prf_disc_qpp_svc_send(struct prf_con_info* con_info)
+{
+    struct gatt_disc_svc_req * svc_req = KE_MSG_ALLOC(GATT_DISC_SVC_REQ,
+                                                      TASK_GATT, con_info->prf_id,
+                                                      gatt_disc_svc_req);
+
+    //gatt request type: by UUID
+    svc_req->req_type         = GATT_DISC_BY_UUID_SVC;
+    //connection handle
+    svc_req->conhdl           = con_info->conhdl;
+    //start handle;
+    svc_req->start_hdl        = ATTC_1ST_REQ_START_HDL;
+    //end handle
+    svc_req->end_hdl          = ATTC_1ST_REQ_END_HDL;
+    //UUID search
+    svc_req->desired_svc.value_size = ATT_UUID_128_LEN;
+    //set the 128 bits UUID to the value array
+    memcpy(&(svc_req->desired_svc.value[0]), QPP_SVC_PRIVATE_UUID, ATT_UUID_128_LEN);
+
+    //send the message to GATT, which will send back the response when it gets it
+    ke_msg_send(svc_req);
+}
+#endif
+
 void prf_disc_svc_send(struct prf_con_info* con_info, uint16_t uuid)
 {
     //send GATT discover primary services by UUID request: find by type request
@@ -488,6 +517,36 @@ void prf_gatt_write_ntf_ind(struct prf_con_info* con_info, uint16_t handle, uint
     co_write16p((&value[0]), ntf_ind_cfg);
     // write value over GATT
     prf_gatt_write(con_info, handle, value, 2, GATT_WRITE_CHAR);
+}
+
+uint8_t prf_check_svc_128_char_validity(uint8_t nb_chars,
+                                    const struct prf_char_inf* chars,
+                                    const struct qpp_char_def* chars_req)
+{
+    uint8_t status = PRF_ERR_OK;
+    uint8_t i;
+
+    for(i = 0; ((i < nb_chars) && (status == PRF_ERR_OK)); i++)
+    {
+        if (chars[i].char_hdl == ATT_INVALID_HANDLE)
+        {
+            //If Characteristic is not present, check requirements
+            if (chars_req[i].req_flag == ATT_MANDATORY)
+            {
+                status = PRF_ERR_STOP_DISC_CHAR_MISSING;
+            }
+        }
+        else
+        {
+            //If Characteristic is present, check properties
+            if((chars[i].prop & chars_req[i].prop_mand) != chars_req[i].prop_mand)
+            {
+                status = PRF_ERR_STOP_DISC_WRONG_CHAR_PROP;
+            }
+        }
+    }
+
+    return status;
 }
 
 uint8_t prf_check_svc_char_validity(uint8_t nb_chars,
@@ -1021,10 +1080,11 @@ void prf_dispatch_disconnect(uint8_t status, uint8_t reason, uint16_t conhdl, ui
 
     //All profiles get this event, they must disable clean
     #if (BLE_QPP_CLIENT)
-    (void)prf_task_id; // Just for eliminating compiler warning
-    if (ke_state_get(TASK_QPPC) == QPPC_CONNECTED)
+    prf_task_id = KE_BUILD_ID(TASK_QPPC, idx);
+    //(void)prf_task_id; // Just for eliminating compiler warning
+    if (ke_state_get(prf_task_id) != QPPC_IDLE)
     {
-        gap_send_discon_cmp_evt(status,reason,conhdl,TASK_QPPC);
+        gap_send_discon_cmp_evt(status,reason,conhdl,prf_task_id);
     }
     #endif // (BLE_QPP_CLIENT)
     
@@ -1296,10 +1356,22 @@ void prf_dispatch_disconnect(uint8_t status, uint8_t reason, uint16_t conhdl, ui
         gap_send_discon_cmp_evt(status, reason, conhdl, TASK_CSCPS);
     }
     #endif // (BLE_CSC_SENSOR)
+    #if (BLE_ANCS_NC)
+    prf_task_id = KE_BUILD_ID(TASK_ANCSC, idx);
+
+    if (ke_state_get(prf_task_id) != ANCSC_IDLE)
+    {
+        gap_send_discon_cmp_evt(status, reason, conhdl, prf_task_id);
+    }
+    #endif // (BLE_ANCS_NC)
 }
 
 void prf_init(void)
 {
+    #if (BLE_ANCS_NC)
+    ancsc_init();
+    #endif // (BLE_ANCS_NC)
+    
     #if (BLE_QPP_SERVER)
     qpps_init();
     #endif // (BLE_QPP_SERVER)
@@ -1449,7 +1521,7 @@ void prf_init(void)
     // Enable app the ability to control ota start or not.
     // PROFILE_CONTROL :  default parameter, nothing need to do , even you can diable following part.
     // APP_CONTROL : need response ota to start ota or not ,when recevie the ota start indication
-    struct otas_ctrl_info ctrl_info = {APP_CONTROL, 0};    
+    struct otas_ctrl_info ctrl_info = {PROFILE_CONTROL, 0};    
     
     if(ctrl_info.ctrl_flag == APP_CONTROL)
     {

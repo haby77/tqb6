@@ -106,9 +106,6 @@ enum NVDS_TAG
     /// adc internal reference vcm
     NVDS_TAG_ADC_INT_REF_VCM            = 0x13,
     
-    //User value
-    NVDS_TAG_MEASURED_POWER             = 0X64, //100
-    
     /// this is the TAG used to be the marker of the last TAG in NVDS (= 0xFF because when
     /// FLASH are erased, they are set to = 0xFF)
     NVDS_END_MARKER_TAG                 = 0xFF,

@@ -55,6 +55,13 @@ void button_init(void)
     //gpio_set_interrupt(BUTTON1_PIN, GPIO_INT_FALLING_EDGE);
     gpio_wakeup_config(BUTTON1_PIN, GPIO_WKUP_BY_LOW);
     gpio_enable_interrupt(BUTTON1_PIN);
+
+    // button 2
+    //gpio_pull_set(BUTTON2_PIN, GPIO_PULL_UP);
+    //gpio_set_direction_field(BUTTON2_PIN, (uint32_t)GPIO_INPUT);
+    //gpio_set_interrupt(BUTTON2_PIN, GPIO_INT_FALLING_EDGE);
+    gpio_wakeup_config(BUTTON2_PIN, GPIO_WKUP_BY_LOW);
+    gpio_enable_interrupt(BUTTON2_PIN);
 }
 
 /**
@@ -72,6 +79,5 @@ int check_button_state(int btn)
     }
 }
 
-
-
+/// @} BUTTON
 

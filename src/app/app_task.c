@@ -195,6 +195,7 @@ const struct ke_msg_handler app_default_state[] =
     {APP_ADV_STOP_TIMER,                    (ke_msg_func_t) app_gap_adv_sotp_timer_handler},     
 #endif
     {APP_SYS_BUTTON_1_TIMER,                (ke_msg_func_t) app_button_timer_handler},
+    {APP_SYS_BUTTON_2_TIMER,                (ke_msg_func_t) app_button_timer_handler},
 #endif
 #endif
 #endif
@@ -614,7 +615,14 @@ const struct ke_msg_handler app_default_state[] =
 #if BLE_BEACON_SERVER
     {BEACON_CREATE_DB_CFM,                  (ke_msg_func_t) app_beacon_create_db_cfm_handler},  
 #endif    
-	
+    
+#if BLE_ANCS_NC
+    {ANCSC_ANCS_CONTENT_IND,                (ke_msg_func_t) app_ancsc_ancs_content_ind_handler},
+    {ANCSC_NTF_SOURCE_IND,                  (ke_msg_func_t) app_ancsc_ntf_source_ind_handler},
+    {ANCSC_DATA_SOURCE_IND,                 (ke_msg_func_t) app_ancsc_data_source_ind_handler},
+    {ANCSC_CMP_EVT,                         (ke_msg_func_t) app_ancsc_cmp_evt_handler},
+    {ANCSC_DISABLE_IND,                     (ke_msg_func_t) app_ancsc_disable_ind_handler},
+#endif
 };
 
 /* Specifies the app message handler structure for every input state.*/

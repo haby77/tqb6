@@ -20,7 +20,7 @@
  */
 
 #define BUZZ_PWM_PERIOD 200
-#define BUZZ_ALERT_PERIOD   4
+#define BUZZ_ALERT_PERIOD   14
 
 #define BUZZER_INTER_ON     0
 #define BUZZER_INTER_OFF    1
@@ -44,5 +44,6 @@ enum buzz_vol
 extern void buzzer_on(enum buzz_vol volume);
 extern void buzzer_off(void);
 extern void usr_buzz_process(uint8_t enable);
+
 
 #endif

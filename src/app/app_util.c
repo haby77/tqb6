@@ -601,6 +601,17 @@ uint8_t app_get_client_idx_by_conhdl(uint16_t conhdl, uint16_t uuid)
  ****************************************************************************************
  */
 #if (BLE_CENTRAL)
+uint8_t app_get_qpp_client_service_status(uint8_t idx)
+{
+    uint8_t enabled = 0;
+
+#if BLE_QPP_CLIENT
+    enabled = app_qppc_env[idx].enabled;
+#endif
+
+    return enabled;
+}
+
 uint8_t app_get_client_service_status(uint8_t idx, uint16_t uuid)
 {
     uint8_t enabled = 0;
@@ -704,6 +715,21 @@ uint8_t app_get_client_service_status(uint8_t idx, uint16_t uuid)
  ****************************************************************************************
  */
 #if (BLE_CENTRAL)
+void app_set_qpp_client_service_status(uint16_t conhdl)
+{
+    uint8_t idx;
+
+    for (idx = 0; idx < BLE_CONNECTION_MAX; idx++)
+    {
+#if BLE_QPP_CLIENT
+        if (conhdl == app_qppc_env[idx].conhdl)
+        {
+            app_qppc_env[idx].enabled = false;
+        }
+#endif
+    }
+}
+
 void app_set_client_service_status(uint16_t conhdl)
 {
     uint8_t idx;

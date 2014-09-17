@@ -232,6 +232,22 @@ struct prf_char_desc_inf
     uint16_t desc_hdl;
 };
 
+typedef struct
+{
+    uint8_t uuid_len;    // Length of UUID
+    uint8_t *uuid; // Pointer to UUID
+} qpp_type_t;
+
+///QPP Characteristic definition
+struct qpp_char_def
+{
+    /// Attribute type info
+    qpp_type_t type;
+    /// Requirement Attribute Flag
+    uint8_t req_flag;
+    /// Mandatory Properties
+    uint8_t prop_mand;
+};
 
 /// Characteristic definition
 struct prf_char_def

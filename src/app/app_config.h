@@ -667,6 +667,14 @@
         #define BEACON_DB_SIZE        0
     #endif // defined(CFG_PRF_BEACON)    
 
+    ///ANCS Client Role
+    #if defined(CFG_PRF_ANCSC)
+        #define BLE_ANCS_NC      1
+        #define TASK_ANCSC       CFG_TASK_ANCSC
+    #else
+        #define BLE_ANCS_NC      0
+    #endif // defined(CFG_PRF_ANCSC)
+
     //Force ATT parts depending on profile roles or compile options
     /// Attribute Client
     #if BLE_RSC_COLLECTOR || BLE_PAS_CLIENT || BLE_CSC_COLLECTOR || BLE_AN_CLIENT || BLE_PROX_MONITOR || BLE_FINDME_LOCATOR || BLE_HT_COLLECTOR || BLE_BP_COLLECTOR || BLE_HR_COLLECTOR || BLE_DIS_CLIENT || BLE_TIP_CLIENT || BLE_SP_CLIENT || BLE_BATT_CLIENT || (defined(CFG_ATTC))

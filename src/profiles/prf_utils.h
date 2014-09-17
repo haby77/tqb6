@@ -192,6 +192,18 @@ void prf_disc_svc_send(struct prf_con_info* con_info, uint16_t uuid);
 
 /**
  ****************************************************************************************
+ * @brief Request QPP service discovery on peer device.
+ *
+ * This request will be used to retrieve start and end handles of the service.
+ *
+ * @param con_info Pointer to connection information (connection handle, app task id,
+ *                 profile task id)
+ ****************************************************************************************
+ */
+void prf_disc_qpp_svc_send(struct prf_con_info* con_info);
+
+/**
+ ****************************************************************************************
  * @brief Request included service discovery on peer device.
  *
  * This request will be used to retrieve included services of a primary service
@@ -287,6 +299,24 @@ uint8_t prf_check_svc_char_validity(uint8_t nb_chars,
                                     const struct prf_char_inf* chars,
                                     const struct prf_char_def* chars_req);
 
+/**
+ ****************************************************************************************
+ * @brief Check QPP service characteristic validity
+ *
+ * For each characteristic in service it verifies handles.
+ *
+ * If some handles are not present, it checks if they shall be present or they are optional.
+ *
+ * @param nb_chars   Number of Characteristics in the service
+ * @param chars      Characteristics values (char handles, val handles, properties)
+ * @param chars_req  Characteristics requirements.
+ *
+ * @return 0x1 if service is valid, 0x00 else.
+ ****************************************************************************************
+ */
+uint8_t prf_check_svc_128_char_validity(uint8_t nb_chars,
+                                    const struct prf_char_inf* chars,
+                                    const struct qpp_char_def* chars_req);
 /**
  ****************************************************************************************
  * @brief Check service characteristic descriptors validity

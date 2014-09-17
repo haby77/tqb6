@@ -143,6 +143,11 @@
 #include "otas_task.h"
 #include "app_otas_task.h"
 #endif
+
+#if BLE_ANCS_NC
+#include "app_ancsc.h"
+#include "app_ancsc_task.h"
+#endif
     
 #if QN_DEMO_MENU
 #include "app_menu.h"
@@ -430,7 +435,7 @@ struct app_env_tag
 #endif
 
 #if BLE_QPP_CLIENT
-    struct app_qppc_env_tag qppc_ev;
+    struct app_qppc_env_tag qppc_ev[BLE_CONNECTION_MAX];
 #endif
 
 #if BLE_QPP_SERVER
@@ -439,6 +444,10 @@ struct app_env_tag
 
 #if BLE_BEACON_SERVER
     struct app_beacon_env_tag beacon_ev;
+#endif
+
+#if (BLE_ANCS_NC)
+    struct app_ancsc_env_tag ancsc_ev;
 #endif
 
 #if QN_DEMO_MENU

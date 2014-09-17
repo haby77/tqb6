@@ -57,6 +57,11 @@ void buzzer_off(void)
 
 void usr_buzz_process(uint8_t enable)
 {
+//    buzzer_off();
+//    if (enable == BUZZER_3S)
+//    {
+//        
+//    }
     if (enable == BUZZER_INTER_ON || usr_env.buzz_st_on == true)
     {
         if(pwm_pwm_GetCR(QN_PWM) & PWM_CH0)
