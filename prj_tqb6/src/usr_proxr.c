@@ -26,9 +26,12 @@ void usr_proxr_alert(struct proxr_alert_ind *param)
         }
         else
         {
-            buzzer_off();
-            ke_timer_clear(APP_SYS_BUZZ_TIMER, TASK_APP);
-            ke_timer_clear(APP_PROXR_ALERT_STOP_TIMER, TASK_APP);
+            if (usr_env.buzz_st_on == false)  
+            {  
+                buzzer_off();
+                ke_timer_clear(APP_SYS_BUZZ_TIMER, TASK_APP);
+                ke_timer_clear(APP_PROXR_ALERT_STOP_TIMER, TASK_APP);
+            }
         }
     }
 

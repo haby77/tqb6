@@ -49,7 +49,7 @@ struct usr_env_tag
 {
     uint16_t    led1_on_dur;
     uint16_t    led1_off_dur;
-
+    bool    buzz_st_on;
 #if (defined(QN_ADV_WDT))
     bool        adv_wdt_enable;
     void        (*adv_wdt_to)(void);
@@ -63,6 +63,7 @@ struct usr_env_tag
 #if (defined(BASS_SAMPLE_NUMBER))
     int16_t     bas_reg_buf[BASS_SAMPLE_NUMBER];
 #endif
+
 };
 
 extern struct usr_env_tag usr_env;

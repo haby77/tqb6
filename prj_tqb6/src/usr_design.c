@@ -97,15 +97,15 @@ static void adv_wdt_to_handler(void)
                           GAP_ADV_FAST_INTV1, GAP_ADV_FAST_INTV2);
 }
 #if (defined(LED_BREATH))
-struct usr_env_tag usr_env = {LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE, false, adv_wdt_to_handler,false,0};
+struct usr_env_tag usr_env = {LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE,false, false, adv_wdt_to_handler,false,0};
 #else
-struct usr_env_tag usr_env = {LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE, false, adv_wdt_to_handler};
+struct usr_env_tag usr_env = {LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE,false, false, adv_wdt_to_handler};
 #endif
 #else
 #if (defined(LED_BREATH))
-struct usr_env_tag usr_env = {LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE,false,0};
+struct usr_env_tag usr_env = {LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE,false,false,0};
 #else
-struct usr_env_tag usr_env = {LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE};
+struct usr_env_tag usr_env = {LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE,false};
 #endif
 #endif
 
@@ -148,9 +148,13 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
             break;
 
         case GAP_DISCON_CMP_EVT:
-        {
+            if (((struct gap_discon_cmp_evt *)param)->reason == 0x08)
+            {
+                usr_env.buzz_st_on = true;
+                usr_buzz_process(BUZZER_INTER_ON);
+            }
             usr_led1_set(LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE);
-			usr_buzz_process(BUZZER_INTER_ON);	
+			//usr_buzz_process(BUZZER_INTER_ON);	
 			//tchip
 			stop_tchip_test_timer();//Í£Ö¹¶¨Ê±Æ÷
         
@@ -165,7 +169,6 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
                     app_env.scanrsp_data, app_set_scan_rsp_data(app_get_local_service_flag()),
                     GAP_ADV_FAST_INTV1, GAP_ADV_FAST_INTV2);
             break;
-        }
 
         case GAP_LE_CREATE_CONN_REQ_CMP_EVT:
             if(((struct gap_le_create_conn_req_cmp_evt *)param)->conn_info.status == CO_ERROR_NO_ERROR)
@@ -193,9 +196,11 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
                         conn_par.time_out = IOS_STO_MULT;
                         app_gap_param_update_req(((struct gap_le_create_conn_req_cmp_evt *)param)->conn_info.conhdl, &conn_par);
                     }
+                    //usr_env.buzz_st_on = false;
                     usr_buzz_process(BUZZER_INTER_OFF);
                 }
-            }
+           }   
+           //usr_buzz_process(BUZZER_INTER_OFF);
 #ifdef CFG_PRF_BASS  
             //Force immediately update the battery voltage
             app_bass_batt_level_timer_handler(APP_BASS_BATT_LEVEL_TIMER, NULL, TASK_APP, TASK_APP);
@@ -435,6 +440,7 @@ int app_button_timer_handler(ke_msg_id_t const msgid, void const *param,
                 if (KEY_ALERT_FLAG == KEY_ALERT_PRESS)
                 {
                     QPRINTF("KEY_ALERT_PRESS!\r\n");
+                    usr_env.buzz_st_on = false;
                     usr_buzz_process(BUZZER_INTER_OFF);
                 }
             }
