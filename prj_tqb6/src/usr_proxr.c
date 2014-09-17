@@ -65,8 +65,9 @@ int app_proxr_alert_to_handler(ke_msg_id_t const msgid,
                                ke_task_id_t const src_id)
 {
     // Stop proxr alert
-    buzzer_off();
-
+    
+    //usr_env.buzz_st_on = false;
+    usr_buzz_process(BUZZER_INTER_OFF);
     //app_proxr_env->alert_lvl = 0;
     QPRINTF("alert_stop_timer_handler.\r\n");
     return (KE_MSG_CONSUMED);

@@ -153,6 +153,11 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
                 usr_env.buzz_st_on = true;
                 usr_buzz_process(BUZZER_INTER_ON);
             }
+            else    if (((struct gap_discon_cmp_evt *)param)->reason == 0x13)
+            {
+                   usr_buzz_process(BUZZER_INTER_ON); 
+                   ke_timer_set(APP_PROXR_ALERT_STOP_TIMER,TASK_APP,1*100);
+            }
             usr_led1_set(LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE);
 			//usr_buzz_process(BUZZER_INTER_ON);	
 			//tchip
