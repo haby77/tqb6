@@ -50,7 +50,7 @@
 #define CFG_FORCE_RENAME
 
 /// DC-DC enable
-#define CFG_DC_DC
+//#define CFG_DC_DC
 
 /// 32k RCO
 // #define CFG_32K_RCO
@@ -59,7 +59,7 @@
 #define CFG_NVDS_WRITE
 
 /// Test mode controll pin
-//#define CFG_TEST_CTRL_PIN GPIO_P31
+#define CFG_TEST_CTRL_PIN (GPIO_P06)
 
 /// ADV watchdog timer
 #if (defined(CFG_FW_V18))
