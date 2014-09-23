@@ -33,8 +33,8 @@
 #define LED1_PIN    (GPIO_P26)
 #define LED2_PIN    (GPIO_P13)
 #define LED3_PIN    (GPIO_P02)  // no pin in QN9021
-#define LED4_PIN    (GPIO_P02)  // no pin in QN9021
-#define LED5_PIN    (GPIO_P02)  // no pin in QN9021
+#define LED4_PIN    (GPIO_P06)  // no pin in QN9021
+#define LED5_PIN    (GPIO_P07)  // no pin in QN9021
 
 #endif
 

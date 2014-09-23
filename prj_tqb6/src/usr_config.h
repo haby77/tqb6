@@ -59,7 +59,7 @@
 #define CFG_NVDS_WRITE
 
 /// Test mode controll pin
-#define CFG_TEST_CTRL_PIN (GPIO_P06)
+#define CFG_TEST_CTRL_PIN (GPIO_P31)
 
 /// ADV watchdog timer
 #if (defined(CFG_FW_V18))
