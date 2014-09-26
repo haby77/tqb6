@@ -86,13 +86,13 @@
 //#define CFG_HCI_SPI_WR_CTRL_PIN         GPIO_P26
 
 /// Debug information output interface
-#define CFG_DEBUG_UART  QN_UART0
+//#define CFG_DEBUG_UART  QN_UART0
 
 // Using standard lib printf
 #define CFG_STD_PRINTF
 
 /// Debug print option
-#define CFG_DBG_PRINT
+//#define CFG_DBG_PRINT
 
 /// Debug trace option
 // #define CFG_DBG_TRACE_MORE

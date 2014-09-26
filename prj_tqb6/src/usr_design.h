@@ -23,6 +23,7 @@
 
 #include "app_env.h"
 #include "gpio.h"
+#include "buzz.h"
 
 
 #include "test_timer.h"
@@ -49,7 +50,6 @@ struct usr_env_tag
 {
     uint16_t    led1_on_dur;
     uint16_t    led1_off_dur;
-    bool    buzz_st_on;
 #if (defined(QN_ADV_WDT))
     bool        adv_wdt_enable;
     void        (*adv_wdt_to)(void);

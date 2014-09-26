@@ -431,11 +431,6 @@
               <FilePath>..\src\usr_design.c</FilePath>
             </File>
             <File>
-              <FileName>test_timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\__test\test_timer.c</FilePath>
-            </File>
-            <File>
               <FileName>usr_proxr.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\usr_proxr.c</FilePath>

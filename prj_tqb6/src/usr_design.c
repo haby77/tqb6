@@ -37,10 +37,10 @@
 #include "wdt.h"
 #endif
 #include "sleep.h"
+//tchip add
 #include "usr_led.h"
 #include "usr_button.h"
 #include "usr_task.h"
-#include "usr_led.h"
 
 
 /*
@@ -50,19 +50,15 @@
 
 #define LED_ON_DUR_ADV_FAST        2
 #define LED_OFF_DUR_ADV_FAST       (uint16_t)((GAP_ADV_FAST_INTV2*0.625)/10)
-#define LED_ON_DUR_ADV_SLOW        2
-#define LED_OFF_DUR_ADV_SLOW       (uint16_t)((GAP_ADV_SLOW_INTV*0.625))
+#define LED_ON_DUR_ADV_SLOW        2                                                //unused
+#define LED_OFF_DUR_ADV_SLOW       (uint16_t)((GAP_ADV_SLOW_INTV*0.625))            //unused
 #define LED_ON_DUR_CON             2
 #define LED_OFF_DUR_CON                   1000
 #define LED_ON_DUR_IDLE                   0
 #define LED_OFF_DUR_IDLE                  0xffff
 
-#define KEY_SHORT_GATE                    4
-#define KEY_LONG_GATE                     8
-#define KEY_ALERT_GATE                    50
-
-#define APP_HEART_RATE_MEASUREMENT_TO     1400 // 14s
-#define APP_HRPS_ENERGY_EXPENDED_STEP     50
+#define APP_HEART_RATE_MEASUREMENT_TO     1400 // 14s           //unused
+#define APP_HRPS_ENERGY_EXPENDED_STEP     50                    //unused
 
 ///IOS Connection Parameter
 #define IOS_CONN_INTV_MAX                              0x0010
@@ -70,6 +66,10 @@
 #define IOS_SLAVE_LATENCY                              0x0000
 #define IOS_STO_MULT                                   0x012c
 
+//tchip add
+#define KEY_SHORT_GATE                    4                 
+#define KEY_LONG_GATE                     6
+#define KEY_ALERT_GATE                    30
 
 #define KEY_NO_LONG_PRESS           (true)
 #define KEY_LONG_PRESS              (false)
@@ -77,14 +77,21 @@
 #define KEY_NO_ALERT_PRESS          (true)
 #define KEY_ALERT_PRESS             (false)
 
+/*
+ * LOCAL VARIABLE DEFINITIONS
+ ****************************************************************************************
+ */
+
 static  bool    KEY_LONG_PRESS_FLAG;     
 static bool     KEY_ALERT_FLAG = false;
-static  uint8_t Button2_key_count = 0;
+static  uint8_t Button_key_count = 0;
+//end
 
 /*
  * GLOBAL VARIABLE DEFINITIONS
  ****************************************************************************************
  */
+
 #if (defined(QN_ADV_WDT))
 static void adv_wdt_to_handler(void)
 {
@@ -97,15 +104,15 @@ static void adv_wdt_to_handler(void)
                           GAP_ADV_FAST_INTV1, GAP_ADV_FAST_INTV2);
 }
 #if (defined(LED_BREATH))
-struct usr_env_tag usr_env = {LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE,false, false, adv_wdt_to_handler,false,0};
+struct usr_env_tag usr_env = {LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE,BUZZER_IDLE, false, adv_wdt_to_handler,false,0};
 #else
-struct usr_env_tag usr_env = {LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE,false, false, adv_wdt_to_handler};
+struct usr_env_tag usr_env = {LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE,BUZZER_IDLE, false, adv_wdt_to_handler};
 #endif
 #else
 #if (defined(LED_BREATH))
-struct usr_env_tag usr_env = {LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE,false,false,0};
+struct usr_env_tag usr_env = {LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE,BUZZER_IDLE,false,0};
 #else
-struct usr_env_tag usr_env = {LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE,false};
+struct usr_env_tag usr_env = {LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE,BUZZER_IDLE};
 #endif
 #endif
 
@@ -133,13 +140,6 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
                 usr_env.adv_wdt_enable = true;
 #endif
             }
-            else if(APP_ADV == ke_state_get(TASK_APP))
-            {
-                usr_led1_set(LED_ON_DUR_ADV_SLOW, LED_OFF_DUR_ADV_SLOW);
-#if (defined(QN_ADV_WDT))
-                usr_env.adv_wdt_enable = true;
-#endif
-            }
             break;
 
         case GAP_ADV_REQ_CMP_EVT:
@@ -148,31 +148,37 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
             break;
 
         case GAP_DISCON_CMP_EVT:
-            if (((struct gap_discon_cmp_evt *)param)->reason == 0x08)
+            //tchip add
+            if (((struct gap_discon_cmp_evt *)param)->reason == 0x08)   //discon with close the ios app or close bluetooth on iphone
             {
-                usr_env.buzz_st_on = true;
-                usr_buzz_process(BUZZER_INTER_ON);
+                app_buzz_config(BUZZ_ON_S,BUZZER_FORCE_ON);      
             }
-            else    if (((struct gap_discon_cmp_evt *)param)->reason == 0x13)
-            {
-                   usr_buzz_process(BUZZER_INTER_ON); 
-                   ke_timer_set(APP_PROXR_ALERT_STOP_TIMER,TASK_APP,1*100);
-            }
+            else    
+                if (((struct gap_discon_cmp_evt *)param)->reason == 0x13)   //discon with ios app normal cancel
+                {
+                    buzz_env.count = 3;
+                    app_buzz_config(BUZZ_ON_S,BUZZER_COUNT_ON); 
+                }
+                else
+                {
+                    buzz_env.count = 2;
+                    app_buzz_config(BUZZ_ON_S,BUZZER_COUNT_ON);
+                }
+                ke_timer_set(APP_SYS_BUZZ_TIMER,TASK_APP,1);
+            //end
             usr_led1_set(LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE);
-			//usr_buzz_process(BUZZER_INTER_ON);	
-			//tchip
-			stop_tchip_test_timer();//Í£Ö¹¶¨Ê±Æ÷
-        
+ 
+//tchip add 
 #ifdef CFG_PRF_BASS 
             ke_timer_clear(APP_BASS_BATT_LEVEL_TIMER, TASK_APP);
 #endif
-
+//end
 
             // start adv
-            app_gap_adv_start_req(GAP_GEN_DISCOVERABLE|GAP_UND_CONNECTABLE,
-                    app_env.adv_data, app_set_adv_data(GAP_GEN_DISCOVERABLE),
-                    app_env.scanrsp_data, app_set_scan_rsp_data(app_get_local_service_flag()),
-                    GAP_ADV_FAST_INTV1, GAP_ADV_FAST_INTV2);
+//            app_gap_adv_start_req(GAP_GEN_DISCOVERABLE|GAP_UND_CONNECTABLE,
+//                    app_env.adv_data, app_set_adv_data(GAP_GEN_DISCOVERABLE),
+//                    app_env.scanrsp_data, app_set_scan_rsp_data(app_get_local_service_flag()),
+//                    GAP_ADV_FAST_INTV1, GAP_ADV_FAST_INTV2);
             break;
 
         case GAP_LE_CREATE_CONN_REQ_CMP_EVT:
@@ -201,11 +207,15 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
                         conn_par.time_out = IOS_STO_MULT;
                         app_gap_param_update_req(((struct gap_le_create_conn_req_cmp_evt *)param)->conn_info.conhdl, &conn_par);
                     }
-                    //usr_env.buzz_st_on = false;
-                    usr_buzz_process(BUZZER_INTER_OFF);
+                    //t-chip add
+                    buzz_env.st = BUZZER_IDLE;
+                    buzz_env.count = 1;
+                    app_buzz_config(BUZZ_ON_L,BUZZER_COUNT_ON);
+                    ke_timer_set(APP_SYS_BUZZ_TIMER,TASK_APP,1);
+                    //end
                 }
            }   
-           //usr_buzz_process(BUZZER_INTER_OFF);
+//tchip add
 #ifdef CFG_PRF_BASS  
             //Force immediately update the battery voltage
             app_bass_batt_level_timer_handler(APP_BASS_BATT_LEVEL_TIMER, NULL, TASK_APP, TASK_APP);
@@ -217,7 +227,6 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
 
         case QPPS_CFG_INDNTF_IND:
             //tchip
-            //start_tchip_test_timer(param);
             break;
 		        
         case OTAS_TRANSIMIT_STATUS_IND:
@@ -230,13 +239,15 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
                 app_ota_ctrl_resp(START_OTA);
             }
             break;
+//end
 	
 #ifdef CFG_PRF_PXPR
 				case PROXR_ALERT_IND:
 						usr_proxr_alert((struct proxr_alert_ind*)param);
 						break;
 #endif
-                
+
+//tchip add
 #ifdef CFG_PRF_BASS     
                 
         case BASS_DISABLE_IND:
@@ -257,7 +268,7 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
             }
             break;
 #endif
-
+//end
         default:
             break;
     }
@@ -297,6 +308,7 @@ int app_led_timer_handler(ke_msg_id_t const msgid, void const *param,
 {
     if(msgid == APP_SYS_LED_1_TIMER)
     {
+//tchip add
 #if (defined(LED_BREATH))
     if (usr_env.led_breath_enable == LED_BREATH_ON)
     {
@@ -306,13 +318,14 @@ int app_led_timer_handler(ke_msg_id_t const msgid, void const *param,
     }
 
 #endif
+//end
         usr_led1_process();
     }
 
     return (KE_MSG_CONSUMED);
 }
 
-
+//tchip add
 /****************************************************************************************
  * @brief Handles BUZZ status timer.
  *
@@ -327,10 +340,34 @@ int app_led_timer_handler(ke_msg_id_t const msgid, void const *param,
 int app_buzz_timer_handler(ke_msg_id_t const msgid, void const *param,
                                ke_task_id_t const dest_id, ke_task_id_t const src_id)
 {
-        
-        usr_buzz_process(BUZZER_INTER_ON);
+        QPRINTF("buzzer state %d.\r\n",buzz_env.st);
+        switch((uint8_t)buzz_env.st)
+        {
+            case   BUZZER_FORCE_ON:
+            case   BUZZER_NORMAL_ON:       
+                ke_timer_set(USR_BUZZER_TIMER,TASK_USR,buzz_env.priod);
+                ke_timer_set(APP_SYS_BUZZ_TIMER,TASK_APP,buzz_env.priod+1);
+                break;
+            case   BUZZER_COUNT_ON:
+                if (buzz_env.count-- != 0)
+                {
+                    ke_timer_set(USR_BUZZER_TIMER,TASK_USR,buzz_env.priod);
+                    ke_timer_set(APP_SYS_BUZZ_TIMER,TASK_APP,buzz_env.priod+1);
+                }
+                break;
+            case    BUZZER_IDLE:
+                buzzer_off();
+                break;
+            case    BUZZER_OFF:
+                buzzer_off();
+                ke_timer_clear(USR_BUZZER_TIMER,TASK_USR);
+                ke_timer_clear(APP_SYS_BUZZ_TIMER,TASK_APP);
+                break;
+                
+        }
         return (KE_MSG_CONSUMED);
 }
+//end
 
 /**
  ****************************************************************************************
@@ -403,6 +440,7 @@ int app_button_timer_handler(ke_msg_id_t const msgid, void const *param,
             // make sure the button is pressed
             if (KEY_LONG_PRESS_FLAG == KEY_LONG_PRESS)
             {
+                
                 if(APP_IDLE == ke_state_get(TASK_APP))
                 {
                     if(!app_qpps_env->enabled)
@@ -420,8 +458,8 @@ int app_button_timer_handler(ke_msg_id_t const msgid, void const *param,
                     }//if APP_IDLE && KEY_LONG_PRESS && Server no working on,start adv.
                     else
                     {
+                        //tchip add
                         uint8_t cmd = 0x02;
-                        QPRINTF("APP_SYS_BUTTON_1_TIMER\r\n");
                         if (KEY_ALERT_FLAG == KEY_ALERT_PRESS)
                         {
                             cmd = 0x03;
@@ -430,10 +468,10 @@ int app_button_timer_handler(ke_msg_id_t const msgid, void const *param,
                             app_qpps_data_send(app_qpps_env->conhdl, 0, 1, &cmd);
                             
                     }//if APP_IDLE && Server is working on,sent msg to alert.
+                    //end
                 }
                 else if(APP_ADV == ke_state_get(TASK_APP))
                 {
-                    QPRINTF("APP_ADV\r\n");
                     // stop adv
                     app_gap_adv_stop_req();
 
@@ -442,21 +480,25 @@ int app_button_timer_handler(ke_msg_id_t const msgid, void const *param,
                     sleep_set_pm(PM_DEEP_SLEEP);
 #endif
                 }//if APP_ADV ,stop ADV and sleep.
+                //tchip add
+                //close the abnormal alert
                 if (KEY_ALERT_FLAG == KEY_ALERT_PRESS)
                 {
                     QPRINTF("KEY_ALERT_PRESS!\r\n");
-                    usr_env.buzz_st_on = false;
-                    usr_buzz_process(BUZZER_INTER_OFF);
+                    buzz_env.st = BUZZER_OFF;
+                    ke_timer_set(APP_SYS_BUZZ_TIMER,TASK_APP,1);
                 }
+                //end
             }
             else
             {
-                QPRINTF("KEY_NO_LONG_PRESS\r\n");
+                //tchip add
                 if (APP_IDLE == ke_state_get(TASK_APP))
                 {
                     uint8_t cmd = 0x10;
                     app_qpps_data_send(app_qpps_env->conhdl, 0, 1, &cmd);
                 }
+                //end
             }
     return (KE_MSG_CONSUMED);
 }
@@ -502,11 +544,11 @@ void usr_init(void)
     {
         ASSERT_ERR(0);
     }
-    
+    //tchip add
     task_usr_desc_register();
     
     ke_state_set(TASK_USR, USR_DISABLE);
-
+   
     
 #ifdef CFG_PRF_BASS
     // Register button ADC sample event callback
@@ -515,7 +557,7 @@ void usr_init(void)
     {
         ASSERT_ERR(0);
     }
-#endif
+#endif //end
 }
 
 //t-chip
@@ -526,7 +568,6 @@ int usr_led_breath_handler(ke_msg_id_t const msgid, void const *param,
                 if (usr_env.led_breath_enable == LED_BREATH_ON)
                 {            	
                     usr_env.vol++;
-                    //QPRINTF("  0x%x  ",vol_breath[vol]);
                     led_breath_on(led_breath_array[usr_env.vol%32]);
                     ke_timer_set(USR_LED_BREATH,TASK_USR,LED_MEG_PERIOD);
                 }
@@ -544,12 +585,12 @@ int usr_key_st_handler(ke_msg_id_t const msgid, void const *param,ke_task_id_t c
 {
     if(!(check_button_state(BUTTON1_PIN)))  //press: 0  ;  idle:  1;
     {
-        Button2_key_count++;
+        Button_key_count++;
         ke_timer_set(USR_KEY_ST,TASK_USR,10);
     }
     else
     {
-        if (Button2_key_count < KEY_SHORT_GATE)
+        if (Button_key_count < KEY_SHORT_GATE)
             {
                 KEY_LONG_PRESS_FLAG = KEY_NO_LONG_PRESS;
 #if (defined(LED_BREATH))
@@ -560,9 +601,9 @@ int usr_key_st_handler(ke_msg_id_t const msgid, void const *param,ke_task_id_t c
 #endif
                 ke_timer_set(APP_SYS_BUTTON_1_TIMER, TASK_APP, 2);           
             }
-        if (Button2_key_count > KEY_LONG_GATE)
+        if (Button_key_count > KEY_LONG_GATE)
         {
-             if (Button2_key_count > KEY_ALERT_GATE)
+             if (Button_key_count > KEY_ALERT_GATE)
              {
                  KEY_ALERT_FLAG = KEY_ALERT_PRESS;
              }
@@ -576,7 +617,7 @@ int usr_key_st_handler(ke_msg_id_t const msgid, void const *param,ke_task_id_t c
 #endif             
              ke_timer_set(APP_SYS_BUTTON_1_TIMER, TASK_APP, 2);
         }
-        Button2_key_count = 0;
+        Button_key_count = 0;
 #if (defined(LED_BREATH))
         ke_timer_set(USR_LED_BREATH,TASK_USR,LED_MEG_PERIOD);
 #endif

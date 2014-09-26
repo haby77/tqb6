@@ -25,14 +25,15 @@
 #include "app_env.h"
 
 //tchip
-#include "test_timer.h"
+//#include "test_timer.h"
 
 
 /* default State handlers definition. */
 const struct ke_msg_handler usr_default_state[USR_MSG_MAX] =
 {
 //tchip
-	{USR_TCHIP_TEST_TIMER,                  (ke_msg_func_t) usr_tchip_test_timer_handler},
+	//{USR_TCHIP_TEST_TIMER,                  (ke_msg_func_t) usr_tchip_test_timer_handler},
+    {USR_BUZZER_TIMER,                  (ke_msg_func_t) usr_buzz_process_handle},
 #if (defined(LED_BREATH))
 	{USR_LED_BREATH,						(ke_msg_func_t) usr_led_breath_handler},
 #endif

@@ -43,14 +43,16 @@ static void SystemIOCfg(void)
                              | P03_GPIO_3_PIN_CTRL
                              | P04_GPIO_4_PIN_CTRL
                              | P05_GPIO_5_PIN_CTRL
+//tchip add
 #if  (defined(QN_9021_MINIDK))                             
-                             | P06_GPIO_6_PIN_CTRL
-                             | P07_GPIO_7_PIN_CTRL
+                             | P06_GPIO_6_PIN_CTRL          //LED4
+                             | P07_GPIO_7_PIN_CTRL          //LED5
 #else                             
                              | P06_SW_DAT_PIN_CTRL
                              | P07_SW_CLK_PIN_CTRL
 #endif
-                             | P10_GPIO_8_PIN_CTRL
+//end
+                             | P10_GPIO_8_PIN_CTRL          //BUTTON
                              | P11_GPIO_9_PIN_CTRL
                              | P12_GPIO_10_PIN_CTRL
                              | P13_GPIO_11_PIN_CTRL
@@ -65,10 +67,10 @@ static void SystemIOCfg(void)
                              | P23_GPIO_19_PIN_CTRL
                              | P24_GPIO_20_PIN_CTRL
                              | P25_GPIO_21_PIN_CTRL
-                             | P26_GPIO_22_PIN_CTRL
-                             | P27_PWM0_PIN_CTRL
+                             | P26_GPIO_22_PIN_CTRL         //indicate LED
+                             | P27_PWM0_PIN_CTRL            //BUZZER
                              | P30_GPIO_24_PIN_CTRL
-                             | P31_GPIO_25_PIN_CTRL
+                             | P31_GPIO_25_PIN_CTRL         //TEST_PIN
 #if (defined(CFG_HCI_SPI))                             
                              | P32_SPI0_DIN_PIN_CTRL        //P3.2 spi1 data in
                              | P33_SPI0_DAT_PIN_CTRL        //P3.3 spi1 data out 
@@ -90,12 +92,13 @@ static void SystemIOCfg(void)
     syscon_SetPDCR(QN_SYSCON, 0x0); // 0 : low driver, 1 : high driver
 
     // pin pull ( 00 : High-Z,  01 : Pull-down,  10 : Pull-up,  11 : Reserved )
+//tchip add
 #if (defined(QN_9021_MINIDK))
-    syscon_SetPPCR0(QN_SYSCON, 0xAAAAAAAA);
+    syscon_SetPPCR0(QN_SYSCON, 0xAAAAAAAA);     //P06,P07 will not usr for swd,so they should not be pull-down
 #else
     syscon_SetPPCR0(QN_SYSCON, 0xAAAA5AAA);
 #endif
-    syscon_SetPPCR1(QN_SYSCON, 0x2AAAAAAA);
+    syscon_SetPPCR1(QN_SYSCON, 0x2AAAAAAA);     
 }
 
 /**

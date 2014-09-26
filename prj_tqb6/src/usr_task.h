@@ -25,7 +25,8 @@ enum
 enum
 {
     	//tchip
-	USR_TCHIP_TEST_TIMER,
+    USR_BUZZER_TIMER,
+	//USR_TCHIP_TEST_TIMER,
 #if (defined(LED_BREATH))
     USR_LED_BREATH,
 #endif

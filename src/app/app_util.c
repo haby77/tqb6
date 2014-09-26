@@ -16,6 +16,7 @@
 #if !QN_WORK_MODE
 #include "qnrf.h"
 #endif
+#include "buzz.h"
 
 #if (defined(CFG_EACI))
 extern struct device_name_set device_name;
