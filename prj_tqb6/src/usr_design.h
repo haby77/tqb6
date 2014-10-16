@@ -64,6 +64,10 @@ struct usr_env_tag
     int16_t     bas_reg_buf[BASS_SAMPLE_NUMBER];
 #endif
 
+#ifdef CFG_PRF_OTAS
+	bool		ota_update;
+#endif
+
 };
 
 extern struct usr_env_tag usr_env;

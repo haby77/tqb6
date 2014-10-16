@@ -103,18 +103,30 @@ static void adv_wdt_to_handler(void)
                           app_env.scanrsp_data, app_set_scan_rsp_data(app_get_local_service_flag()),
                           GAP_ADV_FAST_INTV1, GAP_ADV_FAST_INTV2);
 }
-#if (defined(LED_BREATH))
-struct usr_env_tag usr_env = {LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE, false, adv_wdt_to_handler,false,0};
-#else
-struct usr_env_tag usr_env = {LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE, false, adv_wdt_to_handler};
 #endif
-#else
-#if (defined(LED_BREATH))
-struct usr_env_tag usr_env = {LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE,false,0};
-#else
+
 struct usr_env_tag usr_env = {LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE};
-#endif
-#endif
+
+
+void usr_env_init(void)
+{
+	#ifdef CFG_ADV_WDT
+		usr_env.adv_wdt_enable = false;
+		usr_env.adv_wdt_to = adv_wdt_to_handler;
+	#endif
+	
+	#ifdef	USR_LED_BREATH
+		usr_env.led_breath_enable = false;
+	#endif
+
+	#ifdef CFG_PRF_BASS
+		//usr_env.bas_reg_buf = 
+	#endif
+
+	#ifdef CFG_PRF_OTAS
+		usr_env.ota_update = false;
+	#endif
+}
 
 /*
  * FUNCTION DEFINITIONS
@@ -230,6 +242,10 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
             break;
 		        
         case OTAS_TRANSIMIT_STATUS_IND:
+					
+#ifdef CFG_PRF_BASS
+						bass_disable();
+#endif
             QPRINTF(" APP get OTA transmit status = %d , describe = %d \r\n" , ((struct otas_transimit_status_ind*)param)->status,
                                                                               ((struct otas_transimit_status_ind*)param)->status_des);
             
@@ -543,7 +559,9 @@ void gpio_interrupt_callback(enum gpio_pin pin)
  */
 void usr_init(void)
 {
-    if(KE_EVENT_OK != ke_evt_callback_set(EVENT_BUTTON1_PRESS_ID, 
+	usr_env_init();
+
+	if(KE_EVENT_OK != ke_evt_callback_set(EVENT_BUTTON1_PRESS_ID, 
                                             app_event_button1_press_handler))
     {
         ASSERT_ERR(0);

@@ -227,7 +227,7 @@
 
 //Battery Service Server Role
 // #define CFG_PRF_BASS
-// #define CFG_TASK_BASS   TASK_PRF2
+// #define CFG_TASK_BASS   TASK_PRF6
 
 ///Running Speed and Cadence Sensor Role
 // #define CFG_PRF_RSCPS
