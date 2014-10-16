@@ -52,8 +52,8 @@
 #define LED_OFF_DUR_ADV_FAST       (uint16_t)((GAP_ADV_FAST_INTV2*0.625)/10)
 #define LED_ON_DUR_ADV_SLOW        2                                                //unused
 #define LED_OFF_DUR_ADV_SLOW       (uint16_t)((GAP_ADV_SLOW_INTV*0.625))            //unused
-#define LED_ON_DUR_CON             2
-#define LED_OFF_DUR_CON                   1000
+#define LED_ON_DUR_CON             0//2
+#define LED_OFF_DUR_CON            0xffff//       1000
 #define LED_ON_DUR_IDLE                   0
 #define LED_OFF_DUR_IDLE                  0xffff
 
@@ -67,9 +67,9 @@
 #define IOS_STO_MULT                                   0x012c
 
 //tchip add
-#define KEY_SHORT_GATE                    4                 
+#define KEY_SHORT_GATE                    5                 
 #define KEY_LONG_GATE                     6
-#define KEY_ALERT_GATE                    30
+#define KEY_ALERT_GATE                    45
 
 #define KEY_NO_LONG_PRESS           (true)
 #define KEY_LONG_PRESS              (false)
@@ -104,15 +104,15 @@ static void adv_wdt_to_handler(void)
                           GAP_ADV_FAST_INTV1, GAP_ADV_FAST_INTV2);
 }
 #if (defined(LED_BREATH))
-struct usr_env_tag usr_env = {LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE,BUZZER_IDLE, false, adv_wdt_to_handler,false,0};
+struct usr_env_tag usr_env = {LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE, false, adv_wdt_to_handler,false,0};
 #else
-struct usr_env_tag usr_env = {LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE,BUZZER_IDLE, false, adv_wdt_to_handler};
+struct usr_env_tag usr_env = {LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE, false, adv_wdt_to_handler};
 #endif
 #else
 #if (defined(LED_BREATH))
-struct usr_env_tag usr_env = {LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE,BUZZER_IDLE,false,0};
+struct usr_env_tag usr_env = {LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE,false,0};
 #else
-struct usr_env_tag usr_env = {LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE,BUZZER_IDLE};
+struct usr_env_tag usr_env = {LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE};
 #endif
 #endif
 
@@ -135,7 +135,7 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
             if(APP_IDLE == ke_state_get(TASK_APP))
             {
                 usr_led1_set(LED_ON_DUR_ADV_FAST, LED_OFF_DUR_ADV_FAST);
-                ke_timer_set(APP_ADV_STOP_TIMER, TASK_APP, 30 * 100);
+                ke_timer_set(APP_ADV_INTV_UPDATE_TIMER, TASK_APP, 30 * 100);
 #if (defined(QN_ADV_WDT))
                 usr_env.adv_wdt_enable = true;
 #endif
@@ -244,6 +244,10 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
 #ifdef CFG_PRF_PXPR
 				case PROXR_ALERT_IND:
 						usr_proxr_alert((struct proxr_alert_ind*)param);
+                        if (((struct proxr_alert_ind*)param)->alert_lvl != 0 )
+                            usr_led1_set(LED_ON_DUR_ADV_FAST, LED_OFF_DUR_ADV_FAST);
+                        else
+                            usr_led1_set(LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE);
 						break;
 #endif
 
@@ -340,7 +344,6 @@ int app_led_timer_handler(ke_msg_id_t const msgid, void const *param,
 int app_buzz_timer_handler(ke_msg_id_t const msgid, void const *param,
                                ke_task_id_t const dest_id, ke_task_id_t const src_id)
 {
-        QPRINTF("buzzer state %d.\r\n",buzz_env.st);
         switch((uint8_t)buzz_env.st)
         {
             case   BUZZER_FORCE_ON:
@@ -356,6 +359,7 @@ int app_buzz_timer_handler(ke_msg_id_t const msgid, void const *param,
                 }
                 break;
             case    BUZZER_IDLE:
+                ke_timer_clear(USR_BUZZER_TIMER,TASK_USR);
                 buzzer_off();
                 break;
             case    BUZZER_OFF:
@@ -464,7 +468,7 @@ int app_button_timer_handler(ke_msg_id_t const msgid, void const *param,
                         {
                             cmd = 0x03;
                         }
-                            QPRINTF("cmd is %d\r\n",cmd);
+                            //QPRINTF("cmd is %d\r\n",cmd);
                             app_qpps_data_send(app_qpps_env->conhdl, 0, 1, &cmd);
                             
                     }//if APP_IDLE && Server is working on,sent msg to alert.
@@ -484,7 +488,7 @@ int app_button_timer_handler(ke_msg_id_t const msgid, void const *param,
                 //close the abnormal alert
                 if (KEY_ALERT_FLAG == KEY_ALERT_PRESS)
                 {
-                    QPRINTF("KEY_ALERT_PRESS!\r\n");
+                    //QPRINTF("KEY_ALERT_PRESS!\r\n");
                     buzz_env.st = BUZZER_OFF;
                     ke_timer_set(APP_SYS_BUZZ_TIMER,TASK_APP,1);
                 }

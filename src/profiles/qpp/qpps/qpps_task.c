@@ -99,7 +99,7 @@ static int qpps_create_db_req_handler(ke_msg_id_t const msgid,
     /*---------------------------------------------------*
      * Quintic private Service Creation
      *---------------------------------------------------*/
-		 QPRINTF("qpps_create_db_req_handler. msgid %d.\r\n",msgid);
+		 //QPRINTF("qpps_create_db_req_handler. msgid %d.\r\n",msgid);
 	if (tx_char_num > 1)
 	{
 		qpps_db = (struct atts_desc *)ke_malloc(sizeof(qpps_att_db) + 3 * (tx_char_num - 1) * sizeof(struct atts_desc));
@@ -239,7 +239,7 @@ static int qpps_data_send_req_handler(ke_msg_id_t const msgid,
                                       ke_task_id_t const src_id)
 {
 	 
-	 QPRINTF("qpps_data_send_req_handler. msgid %d.\r\n",msgid);
+	 //QPRINTF("qpps_data_send_req_handler. msgid %d.\r\n",msgid);
 	 if((param->conhdl == qpps_env.conhdl) &&
 			(param->length <= QPP_DATA_MAX_LEN) &&
 			(param->index <= qpps_env.ntf_char_num))
@@ -298,7 +298,7 @@ static int gatt_write_cmd_ind_handler(ke_msg_id_t const msgid,
                                       ke_task_id_t const src_id)
 {
     uint8_t status = PRF_ERR_OK;
-		QPRINTF("gatt_write_cmd_ind_handler. msgid %d.\r\n",src_id);
+		//QPRINTF("gatt_write_cmd_ind_handler. msgid %d.\r\n",src_id);
     if (param->conhdl == qpps_env.conhdl)
     {
         // Client Char. Configuration
@@ -338,7 +338,7 @@ static int gatt_write_cmd_ind_handler(ke_msg_id_t const msgid,
 					struct qpps_cfg_indntf_ind * ind = KE_MSG_ALLOC(QPPS_CFG_INDNTF_IND,
 																	qpps_env.appid, TASK_QPPS,
 																	qpps_cfg_indntf_ind);
-					QPRINTF("QPPS_CFG_INDNTF_IND SEND \r\n");
+					//QPRINTF("QPPS_CFG_INDNTF_IND SEND \r\n");
 					ind->char_index = (char_index / 3);
 					memcpy(&ind->cfg_val, &value, sizeof(uint16_t));
 

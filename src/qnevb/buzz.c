@@ -60,7 +60,7 @@ void buzzer_off(void)
 
 int usr_buzz_process_handle(ke_msg_id_t const msgid, void const *param,ke_task_id_t const dest_id, ke_task_id_t const src_id)
 {
-    QPRINTF("usr_buzz_process_handle.\r\n");
+    //QPRINTF("usr_buzz_process_handle.\r\n");
     if(pwm_pwm_GetCR(QN_PWM) & PWM_CH0)
     {
         buzzer_off();

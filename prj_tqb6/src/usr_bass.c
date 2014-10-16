@@ -14,6 +14,7 @@ void adc_sample_complete_callback(void)
     ke_evt_set(1UL << EVENT_ADC_SAMPLE_CMP_ID);
 }
 
+#ifdef CFG_PRF_BASS
 int app_bass_batt_level_timer_handler(ke_msg_id_t const msgid,
                                       void *param,
                                       ke_task_id_t const dest_id,
@@ -42,6 +43,7 @@ int app_bass_batt_level_timer_handler(ke_msg_id_t const msgid,
 
     return (KE_MSG_CONSUMED);
 }
+//#endif
 
 
 /**
@@ -98,3 +100,4 @@ void app_event_adc_sample_cmp_handler(void)
         app_bass_env->ntf_sending = true;
     }
 }
+#endif

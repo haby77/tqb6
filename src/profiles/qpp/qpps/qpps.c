@@ -146,7 +146,7 @@ void qpps_init(void)
 {
     // Reset environment
     memset(&qpps_env, 0, sizeof(qpps_env));
-	QPRINTF("qpps_init:I'm running! the %d times\r\n",count_hab++);
+	//QPRINTF("qpps_init:I'm running! the %d times\r\n",count_hab++);
 	// Register QPPS task into kernel
     task_qpps_desc_register();
 
