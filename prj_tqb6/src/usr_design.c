@@ -52,8 +52,8 @@
 #define LED_OFF_DUR_ADV_FAST       (uint16_t)((GAP_ADV_FAST_INTV2*0.625)/10)
 #define LED_ON_DUR_ADV_SLOW        2                                                //unused
 #define LED_OFF_DUR_ADV_SLOW       (uint16_t)((GAP_ADV_SLOW_INTV*0.625))            //unused
-#define LED_ON_DUR_CON             0//2
-#define LED_OFF_DUR_CON            0xffff//       1000
+#define LED_ON_DUR_CON             2
+#define LED_OFF_DUR_CON            1000
 #define LED_ON_DUR_IDLE                   0
 #define LED_OFF_DUR_IDLE                  0xffff
 
@@ -502,12 +502,11 @@ int app_button_timer_handler(ke_msg_id_t const msgid, void const *param,
                 }//if APP_ADV ,stop ADV and sleep.
                 //tchip add
                 //close the abnormal alert
-                if (KEY_ALERT_FLAG == KEY_ALERT_PRESS)
-                {
-                    //QPRINTF("KEY_ALERT_PRESS!\r\n");
-                    buzz_env.st = BUZZER_OFF;
-                    ke_timer_set(APP_SYS_BUZZ_TIMER,TASK_APP,1);
-                }
+//                if (KEY_ALERT_FLAG == KEY_ALERT_PRESS)
+//                {
+//                    //QPRINTF("KEY_ALERT_PRESS!\r\n");
+//                    buzz_env.st = BUZZER_OFF;
+//                }
                 //end
             }
             else
@@ -516,6 +515,9 @@ int app_button_timer_handler(ke_msg_id_t const msgid, void const *param,
                 if (APP_IDLE == ke_state_get(TASK_APP))
                 {
                     uint8_t cmd = 0x10;
+										buzz_env.st = BUZZER_OFF;
+                    ke_timer_set(APP_SYS_BUZZ_TIMER,TASK_APP,1);
+										usr_led1_set(LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE);
                     app_qpps_data_send(app_qpps_env->conhdl, 0, 1, &cmd);
                 }
                 //end
