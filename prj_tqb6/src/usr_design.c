@@ -229,8 +229,12 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
            }   
 //tchip add
 #ifdef CFG_PRF_BASS  
-            //Force immediately update the battery voltage
-            app_bass_batt_level_timer_handler(APP_BASS_BATT_LEVEL_TIMER, NULL, TASK_APP, TASK_APP);
+		if (usr_env.ota_update == false)
+			{
+				//Force immediately update the battery voltage
+            	app_bass_batt_level_timer_handler(APP_BASS_BATT_LEVEL_TIMER, NULL, TASK_APP, TASK_APP);
+			}	
+            
 #endif
             break;
 
@@ -275,6 +279,12 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
             break;
 
         case BASS_BATT_LEVEL_NTF_CFG_IND:
+			if (usr_env.ota_update == true)
+			{
+				bass_disable();
+				break;
+			}	
+				
             if (((struct bass_batt_level_ntf_cfg_ind *)param)->ntf_cfg == PRF_CLI_START_NTF)
             {
                 app_bass_env->ntf_sending = false;

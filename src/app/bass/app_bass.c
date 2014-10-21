@@ -61,7 +61,11 @@
  */
 void app_bass_create_db(uint8_t bas_nb, uint8_t *features)
 {
-    uint8_t i;
+	if (usr_env.ota_update == true)
+			{
+				return;
+			}
+	uint8_t i;
     struct bass_create_db_req * msg = KE_MSG_ALLOC(BASS_CREATE_DB_REQ, TASK_BASS, TASK_APP, bass_create_db_req);
 
     msg->bas_nb = bas_nb;
@@ -98,7 +102,11 @@ void app_bass_enable_req(uint16_t conhdl, uint8_t bas_nb, uint8_t sec_lvl, uint8
                          uint16_t *batt_level_ntf_cfg,  uint8_t *old_batt_lvl,
                          uint8_t *current_batt_lvl, struct prf_char_pres_fmt *batt_level_pres_format)
 {
-    struct bass_enable_req * msg = KE_MSG_ALLOC(BASS_ENABLE_REQ, TASK_BASS, TASK_APP, bass_enable_req);
+	if (usr_env.ota_update == true)
+			{
+				return;
+			}
+	struct bass_enable_req * msg = KE_MSG_ALLOC(BASS_ENABLE_REQ, TASK_BASS, TASK_APP, bass_enable_req);
 
     msg->conhdl = conhdl;
     msg->sec_lvl = sec_lvl;
@@ -129,7 +137,11 @@ void app_bass_enable_req(uint16_t conhdl, uint8_t bas_nb, uint8_t sec_lvl, uint8
  */
 void app_bass_batt_level_upd_req(uint16_t conhdl, uint8_t bas_instance, uint8_t batt_level)
 {
-    struct bass_batt_level_upd_req * msg = KE_MSG_ALLOC(BASS_BATT_LEVEL_UPD_REQ, TASK_BASS, TASK_APP, bass_batt_level_upd_req);
+	if (usr_env.ota_update == true)
+			{
+				return;
+			}
+	struct bass_batt_level_upd_req * msg = KE_MSG_ALLOC(BASS_BATT_LEVEL_UPD_REQ, TASK_BASS, TASK_APP, bass_batt_level_upd_req);
     
     msg->conhdl = conhdl;
     msg->bas_instance = bas_instance;
