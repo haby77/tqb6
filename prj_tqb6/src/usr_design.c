@@ -229,7 +229,7 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
            }   
 //tchip add
 #ifdef CFG_PRF_BASS  
-		if (usr_env.ota_update == false)
+		if (0)
 			{
 				//Force immediately update the battery voltage
             	app_bass_batt_level_timer_handler(APP_BASS_BATT_LEVEL_TIMER, NULL, TASK_APP, TASK_APP);
@@ -264,7 +264,7 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
 #ifdef CFG_PRF_PXPR
 				case PROXR_ALERT_IND:
 						usr_proxr_alert((struct proxr_alert_ind*)param);
-                        if (((struct proxr_alert_ind*)param)->alert_lvl != 0 )
+                        if (((struct proxr_alert_ind*)param)->alert_lvl != 0)
                             usr_led1_set(LED_ON_DUR_ADV_FAST, LED_OFF_DUR_ADV_FAST);
                         else
                             usr_led1_set(LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE);
@@ -516,6 +516,7 @@ int app_button_timer_handler(ke_msg_id_t const msgid, void const *param,
 //                {
 //                    //QPRINTF("KEY_ALERT_PRESS!\r\n");
 //                    buzz_env.st = BUZZER_OFF;
+//										ke_timer_set(APP_SYS_BUZZ_TIMER,TASK_APP,1);
 //                }
                 //end
             }
@@ -524,12 +525,23 @@ int app_button_timer_handler(ke_msg_id_t const msgid, void const *param,
                 //tchip add
                 if (APP_IDLE == ke_state_get(TASK_APP))
                 {
-                    uint8_t cmd = 0x10;
-										buzz_env.st = BUZZER_OFF;
-                    ke_timer_set(APP_SYS_BUZZ_TIMER,TASK_APP,1);
-										usr_led1_set(LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE);
+										app_proxr_env->alert_lvl = 0;
+										led_set(1, LED_OFF);
+										ke_timer_clear(APP_SYS_LED_1_TIMER, TASK_APP);
+                   	buzz_env.st = BUZZER_OFF;
+										ke_timer_set(APP_SYS_BUZZ_TIMER,TASK_APP,1);
+										uint8_t cmd = 0x10;
                     app_qpps_data_send(app_qpps_env->conhdl, 0, 1, &cmd);
                 }
+//               if (buzz_env.st != BUZZER_OFF && buzz_env.st != BUZZER_IDLE)
+//               {
+//                    usr_env.alert_st = true;
+//										led_set(1, LED_OFF);
+//										ke_timer_clear(APP_SYS_LED_1_TIMER, TASK_APP);
+//                   	buzz_env.st = BUZZER_OFF;
+//										ke_timer_set(APP_SYS_BUZZ_TIMER,TASK_APP,1);
+//										ke_timer_set(APP_PROXR_ALERT_STOP_TIMER,TASK_APP,1);								 
+//               }
                 //end
             }
     return (KE_MSG_CONSUMED);

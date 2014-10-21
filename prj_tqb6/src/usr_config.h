@@ -89,7 +89,7 @@
 //#define CFG_DEBUG_UART  QN_UART0
 
 // Using standard lib printf
-#define CFG_STD_PRINTF
+//#define CFG_STD_PRINTF
 
 /// Debug print option
 //#define CFG_DBG_PRINT
@@ -98,7 +98,7 @@
 // #define CFG_DBG_TRACE_MORE
 
 /// Debug information
-#define CFG_DBG_INFO
+//#define CFG_DBG_INFO
 /// LED breath function
 //t-chip
 //#define CFG_LED_BREATH
@@ -226,8 +226,8 @@
 // #define CFG_TASK_BASC   TASK_PRF1
 
 //Battery Service Server Role
- #define CFG_PRF_BASS
- #define CFG_TASK_BASS   TASK_PRF2
+// #define CFG_PRF_BASS
+// #define CFG_TASK_BASS   TASK_PRF2
 
 ///Running Speed and Cadence Sensor Role
 // #define CFG_PRF_RSCPS

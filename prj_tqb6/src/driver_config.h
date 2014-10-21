@@ -155,9 +155,9 @@
 #define CONFIG_CALIB_DEFAULT_IRQHANDLER                 FALSE        /*!< Enable/Disable Calibration Default IRQ Handler */
 #define CONFIG_CALIB_ENABLE_INTERRUPT                   FALSE       /*!< Enable/Disable Calibration Interrupt */
 
-#define CONFIG_ENABLE_DRIVER_ADC                        TRUE        /*!< Enable/Disable ADC Driver */
+#define CONFIG_ENABLE_DRIVER_ADC       									TRUE        /*!< Enable/Disable ADC Driver */
 #define CONFIG_ADC_DEFAULT_IRQHANDLER                   TRUE        /*!< Enable/Disable ADC Default IRQ Handler */
-#define CONFIG_ADC_ENABLE_INTERRUPT                     FALSE       /*!< Enable/Disable ADC Interrupt */
+#define CONFIG_ADC_ENABLE_INTERRUPT                     TRUE       /*!< Enable/Disable ADC Interrupt */
 
 #define CONFIG_ENABLE_DRIVER_ANALOG                     TRUE        /*!< Enable/Disable Analog Driver */
 #define CONFIG_ENABLE_DRIVER_ACMP0                      TRUE        /*!< Enable/Disable Analog Driver */

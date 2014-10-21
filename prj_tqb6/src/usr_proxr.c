@@ -1,6 +1,8 @@
 
 #include "usr_proxr.h"
 #include "buzz.h"
+#include "usr_led.h"
+#include "usr_design.h"
 
 /**
  ****************************************************************************************
