@@ -52,6 +52,10 @@
     #define QN_9021_MINIDK
 #endif
 
+#if (defined(CFG_9021_NEW_TEN))
+		#define	TCHIP_NEW_TEN
+#endif
+
 /// Work Mode
 #define WORK_MODE_SOC               0
 #define WORK_MODE_NP                1
