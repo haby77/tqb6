@@ -48,17 +48,15 @@
  ****************************************************************************************
  */
 
-#define LED_ON_DUR_ADV_FAST        2
-#define LED_OFF_DUR_ADV_FAST       (uint16_t)((GAP_ADV_FAST_INTV2*0.625)/10)
-#define LED_ON_DUR_ADV_SLOW        2                                                //unused
-#define LED_OFF_DUR_ADV_SLOW       (uint16_t)((GAP_ADV_SLOW_INTV*0.625))            //unused
+#define LED_ON_DUR_ADV_FAST        75//
+#define LED_OFF_DUR_ADV_FAST       75//(uint16_t)((GAP_ADV_FAST_INTV2*0.625)/10)
+#define LED_ON_DUR_ADV_SLOW        25//2                                                //unused
+#define LED_OFF_DUR_ADV_SLOW       250//(uint16_t)((GAP_ADV_SLOW_INTV*0.625))            //unused
 #define LED_ON_DUR_CON             2
 #define LED_OFF_DUR_CON            1000
 #define LED_ON_DUR_IDLE                   0
 #define LED_OFF_DUR_IDLE                  0xffff
 
-#define APP_HEART_RATE_MEASUREMENT_TO     1400 // 14s           //unused
-#define APP_HRPS_ENERGY_EXPENDED_STEP     50                    //unused
 
 ///IOS Connection Parameter
 #define IOS_CONN_INTV_MAX                              0x0010
@@ -147,7 +145,7 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
             if(APP_IDLE == ke_state_get(TASK_APP))
             {
                 usr_led1_set(LED_ON_DUR_ADV_FAST, LED_OFF_DUR_ADV_FAST);
-                ke_timer_set(APP_ADV_INTV_UPDATE_TIMER, TASK_APP, 30 * 100);
+                ke_timer_set(APP_ADV_INTV_UPDATE_TIMER, TASK_APP, 20 * 100);
 #if (defined(QN_ADV_WDT))
                 usr_env.adv_wdt_enable = true;
 #endif
@@ -155,7 +153,7 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
             break;
 
         case GAP_ADV_REQ_CMP_EVT:
-            usr_led1_set(LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE);
+            usr_led1_set(LED_ON_DUR_IDLE,LED_OFF_DUR_IDLE);
             ke_timer_clear(APP_ADV_INTV_UPDATE_TIMER, TASK_APP);
             break;
 
@@ -163,7 +161,16 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
             //tchip add
             if (((struct gap_discon_cmp_evt *)param)->reason == 0x08)   //discon with close the ios app or close bluetooth on iphone
             {
-                app_buzz_config(BUZZ_ON_S,BUZZER_FORCE_ON);      
+                app_buzz_config(BUZZ_ON_S,BUZZER_FORCE_ON); 
+							  app_gap_adv_start_req(GAP_GEN_DISCOVERABLE|GAP_UND_CONNECTABLE,
+                    app_env.adv_data, app_set_adv_data(GAP_GEN_DISCOVERABLE),
+                    app_env.scanrsp_data, app_set_scan_rsp_data(app_get_local_service_flag()),
+                    GAP_ADV_FAST_INTV1, GAP_ADV_FAST_INTV2);
+								ke_timer_set(APP_ADV_INTV_UPDATE_TIMER, TASK_APP, 30 * 100);
+								if (((struct proxr_alert_ind*)param)->alert_lvl != 0)
+                      usr_led1_set(LED_ON_DUR_ADV_FAST, LED_OFF_DUR_ADV_FAST);
+                else
+                      usr_led1_set(LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE);							
             }
             else    
                 if (((struct gap_discon_cmp_evt *)param)->reason == 0x13)   //discon with ios app normal cancel
@@ -178,7 +185,7 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
                 }
                 ke_timer_set(APP_SYS_BUZZ_TIMER,TASK_APP,1);
             //end
-            usr_led1_set(LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE);
+            //usr_led1_set(LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE);
  
 //tchip add 
 #ifdef CFG_PRF_BASS 
@@ -419,7 +426,7 @@ int app_gap_adv_intv_update_timer_handler(ke_msg_id_t const msgid, void const *p
 {
     if(APP_ADV == ke_state_get(TASK_APP))
     {
-        usr_led1_set(LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE);
+        usr_led1_set(LED_ON_DUR_ADV_SLOW, LED_OFF_DUR_ADV_SLOW);
 
         // Update Advertising Parameters
         app_gap_adv_start_req(GAP_GEN_DISCOVERABLE|GAP_UND_CONNECTABLE, 
@@ -543,7 +550,12 @@ int app_button_timer_handler(ke_msg_id_t const msgid, void const *param,
 //										ke_timer_set(APP_PROXR_ALERT_STOP_TIMER,TASK_APP,1);								 
 //               }
                 //end
-            }
+								if (app_proxr_env->alert_lvl != 0 || led_get(1) == LED_ON)
+								{
+                   	buzz_env.st = BUZZER_OFF;
+										ke_timer_set(APP_SYS_BUZZ_TIMER,TASK_APP,1);
+								}
+						}
     return (KE_MSG_CONSUMED);
 }
 
@@ -658,6 +670,7 @@ int usr_key_st_handler(ke_msg_id_t const msgid, void const *param,ke_task_id_t c
                  KEY_ALERT_FLAG = KEY_NO_ALERT_PRESS;       
              }
              KEY_LONG_PRESS_FLAG = KEY_LONG_PRESS;
+						 usr_led1_set(LED_ON_DUR_ADV_FAST, LED_OFF_DUR_ADV_FAST);
 #if (defined(LED_BREATH))
              usr_env.led_breath_enable = LED_BREATH_OFF;  
 #endif             

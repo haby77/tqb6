@@ -22,7 +22,7 @@
  */
 
 #define BUZZ_PWM_PERIOD 200
-#define BUZZ_ALERT_PERIOD_S   34
+#define BUZZ_ALERT_PERIOD_S   6
 #define BUZZ_ALERT_PERIOD_L   84
 
 #define BUZZ_ON_L     0
