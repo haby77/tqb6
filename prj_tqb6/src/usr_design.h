@@ -92,5 +92,7 @@ extern int usr_led_breath_handler(ke_msg_id_t const msgid, void const *param,ke_
 extern void usr_button1_cb(void);
 extern void app_event_button1_press_handler(void);
 extern int usr_key_st_handler(ke_msg_id_t const msgid, void const *param,ke_task_id_t const dest_id, ke_task_id_t const src_id);
+extern void usr_alert_stop_handle(void);
+extern void usr_led_stop_handle(void);
 
 #endif

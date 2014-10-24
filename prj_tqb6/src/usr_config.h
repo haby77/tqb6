@@ -79,7 +79,7 @@
 #define CFG_BLE_MAX_SLEEP_DUR   0x3e80  // 625us * 0x3e80 = 10s
 
 /// Transport layer UART interface used in network processor mode and controller mode
-#define CFG_HCI_UART                    QN_UART0
+//#define CFG_HCI_UART                    QN_UART0
 /// Transport layer SPI interface used in network processor mode and controller mode
 //#define CFG_HCI_SPI                     QN_SPI0
 /// SPI write ready, notify host to read from SPI, output
@@ -226,8 +226,8 @@
 // #define CFG_TASK_BASC   TASK_PRF1
 
 //Battery Service Server Role
-// #define CFG_PRF_BASS
-// #define CFG_TASK_BASS   TASK_PRF2
+ #define CFG_PRF_BASS
+ #define CFG_TASK_BASS   TASK_PRF2
 
 ///Running Speed and Cadence Sensor Role
 // #define CFG_PRF_RSCPS
