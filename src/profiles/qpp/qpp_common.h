@@ -39,7 +39,9 @@
  */
 
 //#define QPP_SVC_PRIVATE_UUID        "\xFB\x34\x9B\x5F\x80\x00\x00\x80\x00\x10\x00\x00\xE9\xFE\x00\x00"
-#define QPP_SVC_PRIVATE_UUID      0xcc07
+
+//<<<<<<<<<<<<<<<<tchip<<<<<<<<<<<<<<<<<<<<<
+#define QPP_SVC_PRIVATE_UUID      0xcc07	//"\xcc\x07\x9B\x5F\x80\x00\x00\x80\x00\x10\x00\x00\xE9\xFE\x00\x00"		//0xcc07
 
 enum
 {
@@ -47,6 +49,7 @@ enum
 	QPP_CHAR_INPUT_DATA_UUID    = 0xCD20,
     FIRMWARE_VERSION_DATA_UUID  = 0xCD30,
 };
+//>>>>>>>>>>>>>>>>tchip>>>>>>>>>>>>>>>>>>>>>
 
 // Derek, used as max data length
 #define QPP_DATA_MAX_LEN         (20)

@@ -52,9 +52,11 @@
     #define QN_9021_MINIDK
 #endif
 
+//<<<<<<<<<<<<<<<<tchip<<<<<<<<<<<<<<<<<<<<<
 #if (defined(CFG_9021_NEW_TEN))
 		#define	TCHIP_NEW_TEN
 #endif
+//>>>>>>>>>>>>>>>>tchip>>>>>>>>>>>>>>>>>>>>>
 
 /// Work Mode
 #define WORK_MODE_SOC               0
@@ -130,10 +132,11 @@
 #define QN_ADV_WDT
 #endif
 
-/// LED breath t-chip
+//<<<<<<<<<<<<<<<<tchip<<<<<<<<<<<<<<<<<<<<<
 #if (defined(CFG_LED_BREATH))
 #define LED_BREATH
 #endif
+//>>>>>>>>>>>>>>>>tchip>>>>>>>>>>>>>>>>>>>>>
 
 /// Memory retention
 #if (defined(CFG_MEM_RETENTION))
@@ -661,6 +664,7 @@
         #define OTAS_DB_SIZE        0
     #endif // defined(CFG_PRF_OTAS)
     
+//<<<<<<<<<<<<<<<<tchip<<<<<<<<<<<<<<<<<<<<<
     ///iBeacon Service Server Role
     #if defined(CFG_PRF_BEACON)
         #define BLE_BEACON_SERVER     1
@@ -678,6 +682,7 @@
     #else
         #define BLE_ANCS_NC      0
     #endif // defined(CFG_PRF_ANCSC)
+//>>>>>>>>>>>>>>>>tchip>>>>>>>>>>>>>>>>>>>>>
 
     //Force ATT parts depending on profile roles or compile options
     /// Attribute Client

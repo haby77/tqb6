@@ -61,10 +61,6 @@ int app_bass_create_db_cfm_handler(ke_msg_id_t const msgid,
                                    ke_task_id_t const dest_id,
                                    ke_task_id_t const src_id)
 {
-if (usr_env.ota_update == true)
-			{
-				return (KE_MSG_CONSUMED);
-			}
 	if (param->status == ATT_ERR_NO_ERROR)
     {
         app_clear_local_service_flag(BLE_BATT_SERVER_BIT);
@@ -118,10 +114,6 @@ int app_bass_error_ind_handler(ke_msg_id_t const msgid,
                                ke_task_id_t const dest_id,
                                ke_task_id_t const src_id)
 {
-	if (usr_env.ota_update == true)
-			{
-				return (KE_MSG_CONSUMED);
-			}
 	QPRINTF("BASS error indication.\r\n");
     return (KE_MSG_CONSUMED);
 }
@@ -145,10 +137,6 @@ int app_bass_batt_level_upd_cfm_handler(ke_msg_id_t const msgid,
                                         ke_task_id_t const dest_id,
                                         ke_task_id_t const src_id)
 {
-	if (usr_env.ota_update == true)
-			{
-				return (KE_MSG_CONSUMED);
-			}
 	app_bass_env->ntf_sending = false;
     app_task_msg_hdl(msgid, param);
     return (KE_MSG_CONSUMED);
@@ -174,10 +162,6 @@ int app_bass_batt_level_ntf_cfg_ind_handler(ke_msg_id_t const msgid,
                                             ke_task_id_t const dest_id,
                                             ke_task_id_t const src_id)
 {
-	if (usr_env.ota_update == true)
-			{
-				return (KE_MSG_CONSUMED);
-			}
     if (param->ntf_cfg == PRF_CLI_START_NTF)
     {
         // Ntf cfg bit set to 1

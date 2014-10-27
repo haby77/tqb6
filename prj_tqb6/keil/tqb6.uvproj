@@ -584,16 +584,6 @@
               <FilePath>..\..\src\profiles\dis\diss\diss_task.c</FilePath>
             </File>
             <File>
-              <FileName>qpps.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\profiles\qpp\qpps\qpps.c</FilePath>
-            </File>
-            <File>
-              <FileName>qpps_task.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\profiles\qpp\qpps\qpps_task.c</FilePath>
-            </File>
-            <File>
               <FileName>proxr.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\profiles\prox\proxr\proxr.c</FilePath>
@@ -622,6 +612,16 @@
               <FileName>beacon_task.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\profiles\beacon\beacon_task.c</FilePath>
+            </File>
+            <File>
+              <FileName>qpps.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\profiles\qpp\qpps\qpps.c</FilePath>
+            </File>
+            <File>
+              <FileName>qpps_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\profiles\qpp\qpps\qpps_task.c</FilePath>
             </File>
           </Files>
         </Group>

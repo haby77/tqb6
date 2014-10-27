@@ -913,8 +913,6 @@ static void app_menu_show_qppc(void)
 
 static void app_menu_handler_qppc(void)
 {
-    uint8_t idx = app_env.select_idx;
-
     switch (app_env.input[0])
     {
     case '0':
@@ -924,8 +922,8 @@ static void app_menu_handler_qppc(void)
     {
         uint16_t conhdl = app_get_conhdl_by_idx(app_env.select_idx);
 
-        if (0xFFFF != conhdl && idx < BLE_CONNECTION_MAX
-            && false == app_get_qpp_client_service_status(idx))
+        if (0xFFFF != conhdl
+            && false == app_qppc_env->enabled)
         {
             app_qppc_enable_req(NULL, conhdl);
         }

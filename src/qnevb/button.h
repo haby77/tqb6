@@ -20,12 +20,12 @@
  */
 #if !defined(QN_9021_MINIDK)
 
-#define BUTTON1_PIN    (GPIO_P14)
+#define BUTTON1_PIN    (GPIO_P30)//(GPIO_P14)
 #define BUTTON2_PIN    (GPIO_P15)
 
 #else
 
-#define BUTTON1_PIN    (GPIO_P10)
+#define BUTTON1_PIN    (GPIO_P10)//(GPIO_P10)
 #define BUTTON2_PIN    (GPIO_P12)
 
 #endif

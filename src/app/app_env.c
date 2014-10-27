@@ -83,6 +83,7 @@ static void app_bass_init(void)
 }
 #endif
 
+//<<<<<<<<<<<<<<<<tchip<<<<<<<<<<<<<<<<<<<<<
 /*
  ****************************************************************************************
  * @brief Initiate the beacon service server enviroment - at initiation
@@ -100,6 +101,7 @@ static void app_beacon_init(void)
     app_beacon_env->conhdl = 0xFFFF;
 }
 #endif
+//>>>>>>>>>>>>>>>>tchip>>>>>>>>>>>>>>>>>>>>>
 
 /*
  ****************************************************************************************
@@ -469,9 +471,12 @@ void app_init(void)
 #if (QN_WORK_MODE != WORK_MODE_SOC)
     app_gap_reset_req();
 #endif
+		
+//<<<<<<<<<<<<<<<<tchip<<<<<<<<<<<<<<<<<<<<<		
 #if BLE_BEACON_SERVER
     app_beacon_init();
 #endif
+//>>>>>>>>>>>>>>>>tchip>>>>>>>>>>>>>>>>>>>>>
 }
 
 /// @} APP

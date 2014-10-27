@@ -41,6 +41,7 @@
 #include "app_eaci_trans.h"
 #endif
 
+//<<<<<<<<<<<<<<<<tchip<<<<<<<<<<<<<<<<<<<<<
 #ifdef CFG_PRF_PXPR
 #include "usr_proxr.h"
 #endif
@@ -48,9 +49,8 @@
 #ifdef CFG_PRF_BASS
 #include "usr_bass.h"
 #endif
+//>>>>>>>>>>>>>>>>tchip>>>>>>>>>>>>>>>>>>>>>
 
-//tchip
-#include "test_timer.h"
 
 /*
  * FUNCTION DEFINITIONS
@@ -187,12 +187,20 @@ const struct ke_msg_handler app_default_state[] =
 #if (!QN_WORK_MODE && !QN_EAPI)
 #if (BLE_PERIPHERAL || BLE_BROADCASTER || BLE_OBSERVER)
     {APP_SYS_LED_1_TIMER,                   (ke_msg_func_t) app_led_timer_handler},
+
+//<<<<<<<<<<<<<<<<tchip<<<<<<<<<<<<<<<<<<<<<
     {APP_SYS_BUZZ_TIMER,                    (ke_msg_func_t) app_buzz_timer_handler},
+//>>>>>>>>>>>>>>>>tchip>>>>>>>>>>>>>>>>>>>>>
+		
 #if (!QN_EACI)
     {APP_SYS_LED_2_TIMER,                   (ke_msg_func_t) app_led_timer_handler},
 #if (BLE_PERIPHERAL)
     {APP_ADV_INTV_UPDATE_TIMER,             (ke_msg_func_t) app_gap_adv_intv_update_timer_handler},
-    {APP_ADV_STOP_TIMER,                    (ke_msg_func_t) app_gap_adv_sotp_timer_handler},     
+		
+//<<<<<<<<<<<<<<<<tchip<<<<<<<<<<<<<<<<<<<<<		
+    {APP_ADV_STOP_TIMER,                    (ke_msg_func_t) app_gap_adv_sotp_timer_handler}, 
+//>>>>>>>>>>>>>>>>tchip>>>>>>>>>>>>>>>>>>>>>    
+		
 #endif
     {APP_SYS_BUTTON_1_TIMER,                (ke_msg_func_t) app_button_timer_handler},
     {APP_SYS_BUTTON_2_TIMER,                (ke_msg_func_t) app_button_timer_handler},
@@ -607,14 +615,15 @@ const struct ke_msg_handler app_default_state[] =
     {QPPS_DAVA_VAL_IND,         	        (ke_msg_func_t) app_qpps_data_ind_handler},
     {QPPS_CREATE_DB_CFM,                	(ke_msg_func_t) app_qpps_create_db_cfm_handler},
 #endif
-    
+   
 #if BLE_OTA_SERVER 
     {OTAS_TRANSIMIT_STATUS_IND,             (ke_msg_func_t) app_otas_start_handler},
 #endif  
 
+//<<<<<<<<<<<<<<<<tchip<<<<<<<<<<<<<<<<<<<<< 
 #if BLE_BEACON_SERVER
     {BEACON_CREATE_DB_CFM,                  (ke_msg_func_t) app_beacon_create_db_cfm_handler},  
-#endif    
+#endif  		
     
 #if BLE_ANCS_NC
     {ANCSC_ANCS_CONTENT_IND,                (ke_msg_func_t) app_ancsc_ancs_content_ind_handler},
@@ -623,6 +632,8 @@ const struct ke_msg_handler app_default_state[] =
     {ANCSC_CMP_EVT,                         (ke_msg_func_t) app_ancsc_cmp_evt_handler},
     {ANCSC_DISABLE_IND,                     (ke_msg_func_t) app_ancsc_disable_ind_handler},
 #endif
+//>>>>>>>>>>>>>>>>tchip>>>>>>>>>>>>>>>>>>>>>		
+		
 };
 
 /* Specifies the app message handler structure for every input state.*/

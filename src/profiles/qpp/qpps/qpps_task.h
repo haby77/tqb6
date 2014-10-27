@@ -39,7 +39,6 @@
 #include <stdint.h>
 #include "ke_task.h"
 #include "qpp_common.h"
-#include "qpps.h"
 
 /*
  * DEFINES

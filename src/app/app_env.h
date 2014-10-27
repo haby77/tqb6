@@ -144,10 +144,12 @@
 #include "app_otas_task.h"
 #endif
 
+//<<<<<<<<<<<<<<<<tchip<<<<<<<<<<<<<<<<<<<<<
 #if BLE_ANCS_NC
 #include "app_ancsc.h"
 #include "app_ancsc_task.h"
 #endif
+//>>>>>>>>>>>>>>>>tchip>>>>>>>>>>>>>>>>>>>>>
     
 #if QN_DEMO_MENU
 #include "app_menu.h"
@@ -165,10 +167,12 @@
 #include "app_eapi.h"
 #endif
 
+//<<<<<<<<<<<<<<<<tchip<<<<<<<<<<<<<<<<<<<<<
 #if BLE_BEACON_SERVER
 #include "app_beacon.h"
 #include "app_beacon_task.h"
 #endif
+//>>>>>>>>>>>>>>>>tchip>>>>>>>>>>>>>>>>>>>>>
 
 /*
  * TYPE DEFINITIONS
@@ -442,6 +446,7 @@ struct app_env_tag
     struct app_qpps_env_tag qpps_ev;
 #endif
 
+//<<<<<<<<<<<<<<<<tchip<<<<<<<<<<<<<<<<<<<<<
 #if BLE_BEACON_SERVER
     struct app_beacon_env_tag beacon_ev;
 #endif
@@ -449,6 +454,7 @@ struct app_env_tag
 #if (BLE_ANCS_NC)
     struct app_ancsc_env_tag ancsc_ev;
 #endif
+//>>>>>>>>>>>>>>>>tchip>>>>>>>>>>>>>>>>>>>>>
 
 #if QN_DEMO_MENU
     uint8_t menu_id;

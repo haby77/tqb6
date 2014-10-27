@@ -16,7 +16,6 @@
 #if !QN_WORK_MODE
 #include "qnrf.h"
 #endif
-#include "buzz.h"
 
 #if (defined(CFG_EACI))
 extern struct device_name_set device_name;
@@ -916,9 +915,13 @@ void app_create_server_service_DB(void)
     app_qpps_env->tx_char_num = 1;
     app_qpps_create_db(app_qpps_env->tx_char_num);
 #endif
+		
+//<<<<<<<<<<<<<<<<tchip<<<<<<<<<<<<<<<<<<<<<		
 #if BLE_BEACON_SERVER
     app_beacon_create_db();
 #endif
+//>>>>>>>>>>>>>>>>tchip>>>>>>>>>>>>>>>>>>>>>
+
 }
 #endif
 
@@ -1161,6 +1164,8 @@ void app_enable_server_service(uint8_t enabled, uint16_t conhdl)
         app_qpps_env->enabled = false;
     }
 #endif
+		
+//<<<<<<<<<<<<<<<<tchip<<<<<<<<<<<<<<<<<<<<<
 #if BLE_BEACON_SERVER
     if (enabled == true)
     {
@@ -1174,6 +1179,7 @@ void app_enable_server_service(uint8_t enabled, uint16_t conhdl)
         app_beacon_env->enabled = false;
     }
 #endif
+//>>>>>>>>>>>>>>>>tchip>>>>>>>>>>>>>>>>>>>>>	
 }
 #endif
 
@@ -1320,8 +1326,8 @@ uint8_t app_set_scan_rsp_data(uint16_t srv_flag)
 #endif
     bool complete = true;
     len = 2;
-/*
-#if BLE_QPP_SERVER
+
+/*#if BLE_QPP_SERVER
     if (srv_flag & BLE_QPPS_SERVER_BIT)
     {
         app_env.scanrsp_data[0] = ATT_UUID_128_LEN + 1;
@@ -1329,7 +1335,8 @@ uint8_t app_set_scan_rsp_data(uint16_t srv_flag)
         memcpy(app_env.scanrsp_data + 2, QPP_SVC_PRIVATE_UUID, ATT_UUID_128_LEN);
         return (ATT_UUID_128_LEN + 2);
     }
-#endif */
+#endif*/
+		
 #if BLE_AN_SERVER
     if (len <= remain_len)
     {

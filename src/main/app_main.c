@@ -5,7 +5,7 @@
  *
  * @brief Main loop of the application.
  *
- * Copyright (C) Quintic 2012-2014
+ * Copyright (C) T-chip 2014
  *
  * $Rev: 1.0 $
  *
@@ -34,17 +34,16 @@
     #include "app_env.h"
 #endif
 
-#if (defined(QN_ADV_WDT))
-	#include "wdt.h"
-#endif
 #include "usr_design.h"
 #include "system.h"
 #include "uart.h"
 #include "spi.h"
 #include "sleep.h"
 #include "led.h"
-//tchip add
+
+//<<<<<<<<<<<<<<<<tchip<<<<<<<<<<<<<<<<<<<<<
 #include "usr_led.h"
+//>>>>>>>>>>>>>>>>tchip>>>>>>>>>>>>>>>>>>>>>
 
 /*
  * LOCAL VARIABLES
@@ -217,39 +216,39 @@ int main(void)
 
                 // Debug
                 led_set(4, LED_OFF);
-                led_set(5, LED_OFF);  // led5 is on when enter into active mode
+                led_set(5, LED_ON);  // led5 is on when enter into active mode
             }
 
             // Check if the processor can be power down
             else if((ble_sleep_st == PM_SLEEP) && (usr_sleep_st == PM_SLEEP))
             {
                 // Debug
-                led_set(5, LED_ON);
-                led_set(4, LED_ON);  // led3 is on when enter into sleep mode
+                led_set(5, LED_OFF);
+                led_set(3, LED_ON);  // led3 is on when enter into sleep mode
 
                 enter_sleep(SLEEP_NORMAL,
                             (WAKEUP_BY_OSC_EN | WAKEUP_BY_GPIO),
                             sleep_cb);
 
                 // Debug
-                led_set(4, LED_OFF);
-                led_set(5, LED_OFF);  // led5 is on when enter into active mode
+                led_set(3, LED_OFF);
+                led_set(5, LED_ON);  // led5 is on when enter into active mode
             }
 
             // Check if the system can be deep sleep
             else if((ble_sleep_st == PM_SLEEP) && (usr_sleep_st == PM_DEEP_SLEEP))
             {
                 // Debug
-                led_set(5, LED_ON);
-                led_set(4, LED_OFF);  // led2 is on when enter into deep sleep mode
+                led_set(5, LED_OFF);
+                led_set(2, LED_ON);  // led2 is on when enter into deep sleep mode
 
                 enter_sleep(SLEEP_DEEP,
                             WAKEUP_BY_GPIO,
                             sleep_cb);
 
                 // Debug
-                led_set(4, LED_OFF);
-                led_set(5, LED_OFF);  // led5 is on when enter into active mode
+                led_set(2, LED_OFF);
+                led_set(5, LED_ON);  // led5 is on when enter into active mode
             }
         }
 

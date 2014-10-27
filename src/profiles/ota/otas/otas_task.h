@@ -127,7 +127,7 @@ enum
     OTAS_CREATE_DB_CFM,
     ///Status of ota trasimition indication to app
     OTAS_TRANSIMIT_STATUS_IND,
-    /// App send this message to control the otas start
+    /// App send this message to control the app start
     OTAS_CONTRL_APP_RESP,
     /// Time of wait for the start control message from app
     OTAS_CONTRL_TIMER,    
@@ -269,12 +269,8 @@ struct otas_ctrl_resp_req
 
 };
 
-/// The app information of active or inactive region
-struct otas_app_information_t
-{
-    uint32_t inactive_app_start_addr;   // inactive flash block start address
-    uint32_t inactive_app_end_addr;     // inactive flash block end address
-};
+
+
 /// @}OTAS
 
 
@@ -386,23 +382,6 @@ void app_otas_disable_req(uint16_t conhdl);
  ****************************************************************************************
  */
 void app_ota_ctrl_resp(enum otas_ctrl_resp ctrl_resp);
-
-/*
- ****************************************************************************************
- * @brief   get otas the inactive flash block information*//**
- * @param[in] ota_app_information information of inactive flash block
- * @response  
- *          - true : get the rigth information
- *          - false : program is in ota communication 
- * @description
- * This function must be called after calling OTAS_INIT()
- * get otas the inactive flash block information : 
- * -  app inactive flash block start address
- * -  app inactive flash block end address
-  ****************************************************************************************
- */
-uint8_t otas_get_app_info(struct otas_app_information_t  *ota_app_information);
-
 
 
 #endif /* BLE_OTA_SERVER */

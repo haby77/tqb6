@@ -66,10 +66,14 @@ enum
     /// Debug UART received data
     APP_SYS_UART_DATA_IND = KE_FIRST_MSG(TASK_APP),
     APP_SYS_LED_1_TIMER,
-    APP_SYS_BUZZ_TIMER,
     APP_SYS_LED_2_TIMER,
     APP_ADV_INTV_UPDATE_TIMER,
+	
+//<<<<<<<<<<<<<<<<tchip<<<<<<<<<<<<<<<<<<<<<	
+		APP_SYS_BUZZ_TIMER,
     APP_ADV_STOP_TIMER,
+//>>>>>>>>>>>>>>>>tchip>>>>>>>>>>>>>>>>>>>>>
+	
     APP_SYS_RCO_CAL_TIMER,
     APP_SYS_32K_XTAL_WAKEUP_TIMER,
 

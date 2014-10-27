@@ -254,22 +254,6 @@ uint8_t app_get_client_service_status(uint8_t idx, uint16_t uuid);
 
 /*
  ****************************************************************************************
- * @brief Get the QPP service UUID enable status from application device record
- *
- ****************************************************************************************
- */
-uint8_t app_get_qpp_client_service_status(uint8_t idx);
-
-/*
- ****************************************************************************************
- * @brief Set the QPP service enable status from application device record
- *
- ****************************************************************************************
- */
-void app_set_qpp_client_service_status(uint16_t conhdl);
-
-/*
- ****************************************************************************************
  * @brief Set the client service enable status from application device record
  *
  ****************************************************************************************
