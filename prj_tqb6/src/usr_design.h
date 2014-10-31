@@ -45,11 +45,20 @@
  * STRUCTURE DEFINITIONS
  ****************************************************************************************
  */
+ 
+ 
+  enum	discon_reason_flag
+ {	
+		normal	=	0x00,
+		device_off	=	0x04,
+		app_force_exit = 0x08,
+ };
 
 struct usr_env_tag
 {
     uint16_t    led1_on_dur;
     uint16_t    led1_off_dur;
+		enum discon_reason_flag	discon_reason;
 #if (defined(QN_ADV_WDT))
     bool        adv_wdt_enable;
     void        (*adv_wdt_to)(void);

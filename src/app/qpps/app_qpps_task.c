@@ -241,7 +241,8 @@ int app_qpps_data_ind_handler(ke_msg_id_t const msgid,
                               ke_task_id_t const dest_id,
                               ke_task_id_t const src_id)
 {
-    if (param->length > 0)
+	app_task_msg_hdl(msgid, param);
+	if (param->length > 0)
     {
         QPRINTF("len=%d, I%02X", param->length, param->data[0]);
     }

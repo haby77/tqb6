@@ -50,8 +50,8 @@
 
 #define LED_ON_DUR_ADV_FAST        75//
 #define LED_OFF_DUR_ADV_FAST       75//(uint16_t)((GAP_ADV_FAST_INTV2*0.625)/10)
-#define LED_ON_DUR_ADV_SLOW        25//2                                                //unused
-#define LED_OFF_DUR_ADV_SLOW       250//(uint16_t)((GAP_ADV_SLOW_INTV*0.625))            //unused
+#define LED_ON_DUR_ADV_SLOW        0//2                                                //unused
+#define LED_OFF_DUR_ADV_SLOW       0xffff//(uint16_t)((GAP_ADV_SLOW_INTV*0.625))            //unused
 #define LED_ON_DUR_CON             2
 #define LED_OFF_DUR_CON            1000
 #define LED_ON_DUR_IDLE                   0
@@ -75,6 +75,7 @@
 #define KEY_NO_ALERT_PRESS          (true)
 #define KEY_ALERT_PRESS             (false)
 
+
 /*
  * LOCAL VARIABLE DEFINITIONS
  ****************************************************************************************
@@ -83,6 +84,7 @@
 static  bool    KEY_LONG_PRESS_FLAG;     
 static bool     KEY_ALERT_FLAG = false;
 static  uint8_t Button_key_count = 0;
+static	uint8_t send_cmd = 0;
 //end
 
 /*
@@ -162,12 +164,6 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
             if (((struct gap_discon_cmp_evt *)param)->reason == 0x08)   //discon with close the ios app or close bluetooth on iphone
             {
                 app_buzz_config(BUZZ_ON_S,BUZZER_FORCE_ON); 
-							  app_gap_adv_start_req(GAP_GEN_DISCOVERABLE|GAP_UND_CONNECTABLE,
-                    app_env.adv_data, app_set_adv_data(GAP_GEN_DISCOVERABLE),
-                    app_env.scanrsp_data, app_set_scan_rsp_data(app_get_local_service_flag()),
-                    GAP_ADV_FAST_INTV1, GAP_ADV_FAST_INTV2);
-								ke_timer_set(USR_ALERT_STOP_TIMER,TASK_USR,60*100);
-								ke_timer_set(APP_ADV_INTV_UPDATE_TIMER, TASK_APP, 30 * 100);
 								if (((struct proxr_alert_ind*)param)->alert_lvl != 0)
                       usr_led1_set(LED_ON_DUR_ADV_FAST, LED_OFF_DUR_ADV_FAST);
                 else
@@ -176,18 +172,38 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
             else    
                 if (((struct gap_discon_cmp_evt *)param)->reason == 0x13)   //discon with ios app normal cancel
                 {
-                    buzz_env.count = 3;
+                    buzz_env.count = 6;
                     app_buzz_config(BUZZ_ON_S,BUZZER_COUNT_ON);
-										usr_led1_set(LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE);	
-																			
+										usr_led1_set(LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE);
+										if (usr_env.discon_reason == app_force_exit)
+										{
+											buzz_env.count = 8;
+											app_buzz_config(BUZZ_ON_L,BUZZER_COUNT_ON);
+											//ke_timer_set(APP_SYS_BUZZ_TIMER,TASK_APP,1);
+										}									
                 }
                 else
                 {
-                    buzz_env.count = 2;
+                    buzz_env.count = 4;
                     app_buzz_config(BUZZ_ON_S,BUZZER_COUNT_ON);
-									usr_led1_set(LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE);
-                }
-                ke_timer_set(APP_SYS_BUZZ_TIMER,TASK_APP,1);
+										usr_led1_set(LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE);
+									if (usr_env.discon_reason == app_force_exit)
+										{
+											buzz_env.count = 4;
+											app_buzz_config(BUZZ_ON_L,BUZZER_COUNT_ON);
+											//ke_timer_set(APP_SYS_BUZZ_TIMER,TASK_APP,1);
+										}	
+								}
+								if (usr_env.discon_reason != device_off)
+								{
+									app_gap_adv_start_req(GAP_GEN_DISCOVERABLE|GAP_UND_CONNECTABLE,
+											app_env.adv_data, app_set_adv_data(GAP_GEN_DISCOVERABLE),
+											app_env.scanrsp_data, app_set_scan_rsp_data(app_get_local_service_flag()),
+											GAP_ADV_FAST_INTV1, GAP_ADV_FAST_INTV2);	
+									ke_timer_set(APP_ADV_INTV_UPDATE_TIMER, TASK_APP, 30 * 100);
+								}
+								ke_timer_set(USR_ALERT_STOP_TIMER,TASK_USR,60*100);
+                ke_timer_set(APP_SYS_BUZZ_TIMER,TASK_APP,1);		
             //end
             //usr_led1_set(LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE);
  
@@ -196,12 +212,7 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
             ke_timer_clear(APP_BASS_BATT_LEVEL_TIMER, TASK_APP);
 #endif
 //end
-
-            // start adv
-//            app_gap_adv_start_req(GAP_GEN_DISCOVERABLE|GAP_UND_CONNECTABLE,
-//                    app_env.adv_data, app_set_adv_data(GAP_GEN_DISCOVERABLE),
-//                    app_env.scanrsp_data, app_set_scan_rsp_data(app_get_local_service_flag()),
-//                    GAP_ADV_FAST_INTV1, GAP_ADV_FAST_INTV2);
+						
             break;
 
         case GAP_LE_CREATE_CONN_REQ_CMP_EVT:
@@ -240,12 +251,8 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
            }   
 //tchip add
 #ifdef CFG_PRF_BASS  
-		if (1)
-			{
 				//Force immediately update the battery voltage
-            	app_bass_batt_level_timer_handler(APP_BASS_BATT_LEVEL_TIMER, NULL, TASK_APP, TASK_APP);
-			}	
-            
+            	app_bass_batt_level_timer_handler(APP_BASS_BATT_LEVEL_TIMER, NULL, TASK_APP, TASK_APP);    
 #endif
             break;
 
@@ -253,14 +260,25 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
             break;
 
         case QPPS_CFG_INDNTF_IND:
+						//QPRINTF("%d",((struct qpps_data_val_ind *)param)->data[0]);
             //tchip
             break;
+			case	QPPS_DAVA_VAL_IND	:
+						//QPRINTF("qpps recive data:0x%d\r\n",((struct qpps_data_val_ind *)param)->data[0]);
+						send_cmd = (((struct qpps_data_val_ind *)param)->data[0]);
+						//app_proxr_env->discon_reason = send_cmd;
+						if (send_cmd == 0x04)
+						{
+							usr_env.discon_reason = device_off;	
+							app_qpps_data_send(app_qpps_env->conhdl, 0, 1, &send_cmd);
+						}
+						if (send_cmd == 0x0f)
+						{
+							usr_env.discon_reason = app_force_exit;
+						}
+				break;
 		        
         case OTAS_TRANSIMIT_STATUS_IND:
-					
-#ifdef CFG_PRF_BASS
-						bass_disable();
-#endif
             QPRINTF(" APP get OTA transmit status = %d , describe = %d \r\n" , ((struct otas_transimit_status_ind*)param)->status,
                                                                               ((struct otas_transimit_status_ind*)param)->status_des);
             
@@ -440,6 +458,7 @@ int app_gap_adv_intv_update_timer_handler(ke_msg_id_t const msgid, void const *p
                                 app_env.scanrsp_data, app_set_scan_rsp_data(app_get_local_service_flag()),
                                 GAP_ADV_SLOW_INTV, GAP_ADV_SLOW_INTV);
     }
+		//usr_env.device_off = false;
 
     return (KE_MSG_CONSUMED);
 }
@@ -483,12 +502,13 @@ int app_button_timer_handler(ke_msg_id_t const msgid, void const *param,
             // make sure the button is pressed
             if (KEY_LONG_PRESS_FLAG == KEY_LONG_PRESS)
             {
-                
                 if(APP_IDLE == ke_state_get(TASK_APP))
                 {
                     if(!app_qpps_env->enabled)
                     {
-                        // start adv
+                        //app_env.device_off = false;
+												//usr_env.app_force_exit = false;
+												// start adv
                         app_gap_adv_start_req(GAP_GEN_DISCOVERABLE|GAP_UND_CONNECTABLE,
                                 app_env.adv_data, app_set_adv_data(GAP_GEN_DISCOVERABLE),
                                 app_env.scanrsp_data, app_set_scan_rsp_data(app_get_local_service_flag()),
@@ -523,14 +543,6 @@ int app_button_timer_handler(ke_msg_id_t const msgid, void const *param,
                     sleep_set_pm(PM_DEEP_SLEEP);
 #endif
                 }//if APP_ADV ,stop ADV and sleep.
-                //tchip add
-                //close the abnormal alert
-//                if (KEY_ALERT_FLAG == KEY_ALERT_PRESS)
-//                {
-//                    //QPRINTF("KEY_ALERT_PRESS!\r\n");
-//                    buzz_env.st = BUZZER_OFF;
-//										ke_timer_set(APP_SYS_BUZZ_TIMER,TASK_APP,1);
-//                }
                 //end
             }
             else
@@ -546,15 +558,6 @@ int app_button_timer_handler(ke_msg_id_t const msgid, void const *param,
 										uint8_t cmd = 0x10;
                     app_qpps_data_send(app_qpps_env->conhdl, 0, 1, &cmd);
                 }
-//               if (buzz_env.st != BUZZER_OFF && buzz_env.st != BUZZER_IDLE)
-//               {
-//                    usr_env.alert_st = true;
-//										led_set(1, LED_OFF);
-//										ke_timer_clear(APP_SYS_LED_1_TIMER, TASK_APP);
-//                   	buzz_env.st = BUZZER_OFF;
-//										ke_timer_set(APP_SYS_BUZZ_TIMER,TASK_APP,1);
-//										ke_timer_set(APP_PROXR_ALERT_STOP_TIMER,TASK_APP,1);								 
-//               }
                 //end
 								if (app_proxr_env->alert_lvl != 0 || led_get(1) == LED_ON)
 								{

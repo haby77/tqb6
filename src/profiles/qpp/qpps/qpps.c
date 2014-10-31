@@ -131,7 +131,6 @@ struct qpps_env_tag qpps_env;
  * GLOBAL VARIABLE DEFINITIONS
  ****************************************************************************************
  */
-unsigned int count_hab = 1;
 /*
  * LOCAL FUNCTIONS DEFINITIONS
  ****************************************************************************************

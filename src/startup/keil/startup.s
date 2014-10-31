@@ -58,7 +58,7 @@ _WDT_IRQHandler           EQU     0x01001ee7
 
 ;<<<<<<<<<<<<<<<<tchip<<<<<<<<<<<<<<<<<<<<<
 ;Stack_Size      EQU     0x00000200
-Stack_Size      EQU     0x00000300
+Stack_Size      EQU     0x00000330
 ;>>>>>>>>>>>>>>>>tchip>>>>>>>>>>>>>>>>>>>>>
  
                 AREA    STACK, NOINIT, READWRITE, ALIGN=3

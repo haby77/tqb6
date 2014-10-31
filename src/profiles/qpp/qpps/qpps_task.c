@@ -131,7 +131,7 @@ static int qpps_create_db_req_handler(ke_msg_id_t const msgid,
 	}
 	//QPRINTF("after while ,tx_char_num is %d,idx_nb is %d.\r\n",++tx_char_num,idx_nb);
     //Add Service Into Database
-    QPRINTF("--------------> %d : %d \r\n",sizeof(qpps_att_db)/sizeof(struct atts_desc),QPPS_IDX_NB);
+    //QPRINTF("--------------> %d : %d \r\n",sizeof(qpps_att_db)/sizeof(struct atts_desc),QPPS_IDX_NB);
     status = atts_svc_create_db(&qpps_env.shdl, (uint8_t *)&cfg_flag, idx_nb, NULL,
                                dest_id, (param->tx_char_num == 1 ? &qpps_att_db[0] : &qpps_db[0]));
 	//QPRINTF("qpps_db is %s,char_desc_def is %s\r\n",(qpps_db == NULL)? "NULL":"NONE NULL",(char_desc_def == NULL)? "NULL":"NONE NULL");
