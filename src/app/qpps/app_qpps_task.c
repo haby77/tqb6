@@ -244,7 +244,8 @@ int app_qpps_data_ind_handler(ke_msg_id_t const msgid,
 	app_task_msg_hdl(msgid, param);
 	if (param->length > 0)
     {
-        QPRINTF("len=%d, I%02X", param->length, param->data[0]);
+        for (uint8_t i = 0;i<param->length ;i++ )
+				QPRINTF("len=%d, I%02X", param->length, param->data[i]);
     }
     QPRINTF("\r\n");
 

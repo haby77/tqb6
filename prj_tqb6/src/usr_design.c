@@ -105,7 +105,7 @@ static void adv_wdt_to_handler(void)
 }
 #endif
 
-struct usr_env_tag usr_env = {LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE};
+struct usr_env_tag usr_env = {LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE,normal};
 
 
 void usr_env_init(void)
@@ -164,6 +164,10 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
             if (((struct gap_discon_cmp_evt *)param)->reason == 0x08)   //discon with close the ios app or close bluetooth on iphone
             {
                 app_buzz_config(BUZZ_ON_S,BUZZER_FORCE_ON); 
+								app_gap_adv_start_req(GAP_GEN_DISCOVERABLE|GAP_UND_CONNECTABLE,
+											app_env.adv_data, app_set_adv_data(GAP_GEN_DISCOVERABLE),
+											app_env.scanrsp_data, app_set_scan_rsp_data(app_get_local_service_flag()),
+											GAP_ADV_FAST_INTV1, GAP_ADV_FAST_INTV2);
 								if (((struct proxr_alert_ind*)param)->alert_lvl != 0)
                       usr_led1_set(LED_ON_DUR_ADV_FAST, LED_OFF_DUR_ADV_FAST);
                 else
@@ -200,7 +204,6 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
 											app_env.adv_data, app_set_adv_data(GAP_GEN_DISCOVERABLE),
 											app_env.scanrsp_data, app_set_scan_rsp_data(app_get_local_service_flag()),
 											GAP_ADV_FAST_INTV1, GAP_ADV_FAST_INTV2);	
-									ke_timer_set(APP_ADV_INTV_UPDATE_TIMER, TASK_APP, 30 * 100);
 								}
 								ke_timer_set(USR_ALERT_STOP_TIMER,TASK_USR,60*100);
                 ke_timer_set(APP_SYS_BUZZ_TIMER,TASK_APP,1);		
@@ -275,6 +278,7 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
 						if (send_cmd == 0x0f)
 						{
 							usr_env.discon_reason = app_force_exit;
+							app_qpps_data_send(app_qpps_env->conhdl, 0, 1, &send_cmd);
 						}
 				break;
 		        
