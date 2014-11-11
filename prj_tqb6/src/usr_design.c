@@ -59,9 +59,9 @@
 
 
 ///IOS Connection Parameter
-#define IOS_CONN_INTV_MAX                              0x0010
+#define IOS_CONN_INTV_MAX                              0x0080
 #define IOS_CONN_INTV_MIN                              0x0008
-#define IOS_SLAVE_LATENCY                              0x0000
+#define IOS_SLAVE_LATENCY                              0x0001
 #define IOS_STO_MULT                                   0x012c
 
 //tchip add
@@ -228,7 +228,7 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
 #if (defined(QN_ADV_WDT))
                     usr_env.adv_wdt_enable = false;
 #endif
-
+										usr_env.discon_reason = normal;
                     // Update cnx parameters
                     //if (((struct gap_le_create_conn_req_cmp_evt *)param)->conn_info.con_interval >  IOS_CONN_INTV_MAX)
                     {
@@ -278,6 +278,11 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
 						if (send_cmd == 0x0f)
 						{
 							usr_env.discon_reason = app_force_exit;
+							app_qpps_data_send(app_qpps_env->conhdl, 0, 1, &send_cmd);
+						}
+						if (send_cmd == 0x44)
+						{
+							//usr_env.discon_reason = app_force_exit;
 							app_qpps_data_send(app_qpps_env->conhdl, 0, 1, &send_cmd);
 						}
 				break;
