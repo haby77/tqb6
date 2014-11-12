@@ -33,13 +33,15 @@ const struct ke_msg_handler usr_default_state[USR_MSG_MAX] =
 {
 //tchip
 	//{USR_TCHIP_TEST_TIMER,                  (ke_msg_func_t) usr_tchip_test_timer_handler},
-    {USR_BUZZER_TIMER,                  (ke_msg_func_t) usr_buzz_process_handle},
-		{USR_ALERT_STOP_TIMER,							(ke_msg_func_t) usr_alert_stop_handle},
-		{USR_LED_STOP_TIMER,								(ke_msg_func_t)	usr_led_stop_handle},
+    {USR_BUZZER_TIMER,                  			(ke_msg_func_t) usr_buzz_process_timer_handle},
+		{USR_BUZZER_MUSIC_TIMER,                  (ke_msg_func_t) usr_buzzer_music_timer_handle},
+		//{USR_BUZZER_MUSIC_TIMER,                  (ke_msg_func_t) usr_buzzer_music_timer_handle},
+		{USR_ALERT_STOP_TIMER,										(ke_msg_func_t) usr_alert_stop_timer_handle},
+		{USR_LED_STOP_TIMER,											(ke_msg_func_t)	usr_led_stop_timer_handle},
 #if (defined(LED_BREATH))
-	{USR_LED_BREATH,						(ke_msg_func_t) usr_led_breath_handler},
+		{USR_LED_BREATH,													(ke_msg_func_t) usr_led_breath_handler},
 #endif
-    {USR_KEY_ST,						(ke_msg_func_t) usr_key_st_handler},
+    {USR_KEY_ST,															(ke_msg_func_t) usr_key_st_timer_handler},
 };
 
 

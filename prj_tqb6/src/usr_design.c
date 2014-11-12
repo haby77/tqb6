@@ -163,7 +163,7 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
             //tchip add
             if (((struct gap_discon_cmp_evt *)param)->reason == 0x08)   //discon with close the ios app or close bluetooth on iphone
             {
-                app_buzz_config(BUZZ_ON_S,BUZZER_FORCE_ON); 
+								usr_buzzer_config(BUZZER_BLE_DISCON,MUSIC_ALERT); 
 								app_gap_adv_start_req(GAP_GEN_DISCOVERABLE|GAP_UND_CONNECTABLE,
 											app_env.adv_data, app_set_adv_data(GAP_GEN_DISCOVERABLE),
 											app_env.scanrsp_data, app_set_scan_rsp_data(app_get_local_service_flag()),
@@ -176,27 +176,15 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
             else    
                 if (((struct gap_discon_cmp_evt *)param)->reason == 0x13)   //discon with ios app normal cancel
                 {
-                    buzz_env.count = 6;
-                    app_buzz_config(BUZZ_ON_S,BUZZER_COUNT_ON);
-										usr_led1_set(LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE);
-										if (usr_env.discon_reason == app_force_exit)
-										{
-											buzz_env.count = 8;
-											app_buzz_config(BUZZ_ON_L,BUZZER_COUNT_ON);
-											//ke_timer_set(APP_SYS_BUZZ_TIMER,TASK_APP,1);
-										}									
+                    //buzz_env.count = 6;
+                    usr_buzzer_config(BUZZER_APP_NORMAL_EXIT,MUSIC_END);
+										usr_led1_set(LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE);								
                 }
                 else
                 {
-                    buzz_env.count = 4;
-                    app_buzz_config(BUZZ_ON_S,BUZZER_COUNT_ON);
+                    //buzz_env.count = 4;
+                    usr_buzzer_config(BUZZER_BLE_DISCON,MUSIC_END);
 										usr_led1_set(LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE);
-									if (usr_env.discon_reason == app_force_exit)
-										{
-											buzz_env.count = 4;
-											app_buzz_config(BUZZ_ON_L,BUZZER_COUNT_ON);
-											//ke_timer_set(APP_SYS_BUZZ_TIMER,TASK_APP,1);
-										}	
 								}
 								if (usr_env.discon_reason != device_off)
 								{
@@ -206,7 +194,7 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
 											GAP_ADV_FAST_INTV1, GAP_ADV_FAST_INTV2);	
 								}
 								ke_timer_set(USR_ALERT_STOP_TIMER,TASK_USR,60*100);
-                ke_timer_set(APP_SYS_BUZZ_TIMER,TASK_APP,1);		
+                //ke_timer_set(APP_SYS_BUZZ_TIMER,TASK_APP,1);		
             //end
             //usr_led1_set(LED_ON_DUR_IDLE, LED_OFF_DUR_IDLE);
  
@@ -245,10 +233,10 @@ void app_task_msg_hdl(ke_msg_id_t const msgid, void const *param)
                         app_gap_param_update_req(((struct gap_le_create_conn_req_cmp_evt *)param)->conn_info.conhdl, &conn_par);
                     }
                     //t-chip add
-                    buzz_env.st = BUZZER_IDLE;
-                    buzz_env.count = 1;
-                    app_buzz_config(BUZZ_ON_L,BUZZER_COUNT_ON);
-                    ke_timer_set(APP_SYS_BUZZ_TIMER,TASK_APP,1);
+                    //buzz_env.st = BUZZER_IDLE;
+                    //buzz_env.count = 1;
+                    usr_buzzer_config(BUZZER_BLE_CON,MUSIC_START);
+                    //ke_timer_set(APP_SYS_BUZZ_TIMER,TASK_APP,1);
                     //end
                 }
            }   
@@ -395,49 +383,6 @@ int app_led_timer_handler(ke_msg_id_t const msgid, void const *param,
     return (KE_MSG_CONSUMED);
 }
 
-//tchip add
-/****************************************************************************************
- * @brief Handles BUZZ status timer.
- *
- * @param[in] msgid      APP_SYS_UART_DATA_IND
- * @param[in] param      Pointer to struct app_uart_data_ind
- * @param[in] dest_id    TASK_APP
- * @param[in] src_id     TASK_APP
- *
- * @return If the message was consumed or not.
- ****************************************************************************************
- */
-int app_buzz_timer_handler(ke_msg_id_t const msgid, void const *param,
-                               ke_task_id_t const dest_id, ke_task_id_t const src_id)
-{
-        switch((uint8_t)buzz_env.st)
-        {
-            case   BUZZER_FORCE_ON:
-            case   BUZZER_NORMAL_ON:       
-                ke_timer_set(USR_BUZZER_TIMER,TASK_USR,buzz_env.priod);
-                ke_timer_set(APP_SYS_BUZZ_TIMER,TASK_APP,buzz_env.priod+1);
-                break;
-            case   BUZZER_COUNT_ON:
-                if (buzz_env.count-- != 0)
-                {
-                    ke_timer_set(USR_BUZZER_TIMER,TASK_USR,buzz_env.priod);
-                    ke_timer_set(APP_SYS_BUZZ_TIMER,TASK_APP,buzz_env.priod+1);
-                }
-                break;
-            case    BUZZER_IDLE:
-                ke_timer_clear(USR_BUZZER_TIMER,TASK_USR);
-                buzzer_off();
-                break;
-            case    BUZZER_OFF:
-                buzzer_off();
-                ke_timer_clear(USR_BUZZER_TIMER,TASK_USR);
-                ke_timer_clear(APP_SYS_BUZZ_TIMER,TASK_APP);
-                break;
-                
-        }
-        return (KE_MSG_CONSUMED);
-}
-//end
 
 /**
  ****************************************************************************************
@@ -562,16 +507,17 @@ int app_button_timer_handler(ke_msg_id_t const msgid, void const *param,
 										app_proxr_env->alert_lvl = 0;
 										led_set(1, LED_OFF);
 										ke_timer_clear(APP_SYS_LED_1_TIMER, TASK_APP);
-                   	buzz_env.st = BUZZER_OFF;
-										ke_timer_set(APP_SYS_BUZZ_TIMER,TASK_APP,1);
+										QPRINTF("debug3\r\n");
+										usr_buzzer_config(BUZZER_BLE_IDLE,MUSIC_OFF);
+										//ke_timer_set(APP_SYS_BUZZ_TIMER,TASK_APP,1);
 										uint8_t cmd = 0x10;
                     app_qpps_data_send(app_qpps_env->conhdl, 0, 1, &cmd);
                 }
                 //end
 								if (app_proxr_env->alert_lvl != 0 || led_get(1) == LED_ON)
 								{
-                   	buzz_env.st = BUZZER_OFF;
-										ke_timer_set(APP_SYS_BUZZ_TIMER,TASK_APP,1);
+										QPRINTF("debug4\r\n");
+										usr_buzzer_config(BUZZER_BLE_IDLE,MUSIC_OFF);
 								}
 						}
     return (KE_MSG_CONSUMED);
@@ -633,6 +579,7 @@ void usr_init(void)
     {
         ASSERT_ERR(0);
     }
+		pwm_init(PWM_CH0);
 #endif //end
 }
 
@@ -657,7 +604,7 @@ int usr_led_breath_handler(ke_msg_id_t const msgid, void const *param,
 }
 #endif
 
-int usr_key_st_handler(ke_msg_id_t const msgid, void const *param,ke_task_id_t const dest_id, ke_task_id_t const src_id)
+int usr_key_st_timer_handler(ke_msg_id_t const msgid, void const *param,ke_task_id_t const dest_id, ke_task_id_t const src_id)
 {
     if(!(check_button_state(BUTTON1_PIN)))  //press: 0  ;  idle:  1;
     {
@@ -704,13 +651,14 @@ int usr_key_st_handler(ke_msg_id_t const msgid, void const *param,ke_task_id_t c
     return(KE_MSG_CONSUMED);
 }
 
-void usr_alert_stop_handle(void)
+void usr_alert_stop_timer_handle(void)
 {
-		buzz_env.st = BUZZER_OFF;
-		ke_timer_set(APP_SYS_BUZZ_TIMER,TASK_APP,1);
+		QPRINTF("debug5\r\n");
+		usr_buzzer_config(BUZZER_BLE_IDLE,MUSIC_OFF);
+		ke_timer_clear(USR_ALERT_STOP_TIMER,TASK_USR);
 }
 
-void usr_led_stop_handle(void)
+void usr_led_stop_timer_handle(void)
 {
 		led_set(1, LED_OFF);
 		ke_timer_clear(APP_SYS_LED_1_TIMER, TASK_APP);

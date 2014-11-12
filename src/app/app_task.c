@@ -189,7 +189,7 @@ const struct ke_msg_handler app_default_state[] =
     {APP_SYS_LED_1_TIMER,                   (ke_msg_func_t) app_led_timer_handler},
 
 //<<<<<<<<<<<<<<<<tchip<<<<<<<<<<<<<<<<<<<<<
-    {APP_SYS_BUZZ_TIMER,                    (ke_msg_func_t) app_buzz_timer_handler},
+    //{APP_SYS_BUZZ_TIMER,                    (ke_msg_func_t) app_buzz_timer_handler},
 //>>>>>>>>>>>>>>>>tchip>>>>>>>>>>>>>>>>>>>>>
 		
 #if (!QN_EACI)

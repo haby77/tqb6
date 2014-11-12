@@ -15,25 +15,24 @@ void usr_proxr_alert(struct proxr_alert_ind *param)
     // otherwise (PROXR_IAS_CHAR, disconnect) to alert
     if (param->char_code == PROXR_IAS_CHAR || app_proxr_env->enabled == false)
     {
-        if (buzz_env.st == BUZZER_FORCE_ON)
-            return;
+        //if (buzz_env.status == BUZZER_BLE_DISCON || BUZZER_BLE_IN_DANGEROUS)
+          //  return;
         if(param->alert_lvl == 2)
         {
-           buzz_env.vol = BUZZ_VOL_HIGH;
-           app_buzz_config(BUZZ_ON_S,BUZZER_NORMAL_ON);
+           usr_buzzer_config(BUZZER_BLE_AlERT,MUSIC_ALERT);
 
         }
         else if(param->alert_lvl == 1)
         {
-            buzz_env.vol = BUZZ_VOL_LOW;
-            app_buzz_config(BUZZ_ON_S,BUZZER_NORMAL_ON);
+            usr_buzzer_config(BUZZER_BLE_AlERT,MUSIC_ALERT);
         }
         else
         { 
             buzzer_off();
-            buzz_env.st = BUZZER_IDLE;
+						QPRINTF("debug1\r\n");
+            usr_buzzer_config(BUZZER_BLE_IDLE,MUSIC_OFF);
         }
-        ke_timer_set(APP_SYS_BUZZ_TIMER, TASK_APP,buzz_env.priod); 
+        //ke_timer_set(APP_SYS_BUZZ_TIMER, TASK_APP,buzz_env.priod); 
     }
 
 }
@@ -66,10 +65,11 @@ int app_proxr_alert_to_handler(ke_msg_id_t const msgid,
                                ke_task_id_t const src_id)
 {
     // Stop proxr alert
-    if (buzz_env.st != BUZZER_FORCE_ON )
+    if (buzz_env.status != BUZZER_BLE_IN_DANGEROUS &&  buzz_env.status != BUZZER_BLE_DISCON)
     {
-        buzz_env.st = BUZZER_IDLE;
         buzzer_off();
+				QPRINTF("debug2\r\n");
+				usr_buzzer_config(BUZZER_BLE_IDLE,MUSIC_OFF);
     }
     QPRINTF("alert_stop_timer_handler.\r\n");
     return (KE_MSG_CONSUMED);

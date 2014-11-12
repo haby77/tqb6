@@ -448,6 +448,11 @@
               <FileType>1</FileType>
               <FilePath>..\src\usr_task.c</FilePath>
             </File>
+            <File>
+              <FileName>usr_buzz.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\usr_buzz.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

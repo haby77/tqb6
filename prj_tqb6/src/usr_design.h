@@ -24,6 +24,7 @@
 #include "app_env.h"
 #include "gpio.h"
 #include "buzz.h"
+#include "usr_buzz.h"
 
 
 #include "test_timer.h"
@@ -100,8 +101,8 @@ extern void gpio_interrupt_callback(enum gpio_pin pin);
 extern int usr_led_breath_handler(ke_msg_id_t const msgid, void const *param,ke_task_id_t const dest_id, ke_task_id_t const src_id);
 extern void usr_button1_cb(void);
 extern void app_event_button1_press_handler(void);
-extern int usr_key_st_handler(ke_msg_id_t const msgid, void const *param,ke_task_id_t const dest_id, ke_task_id_t const src_id);
-extern void usr_alert_stop_handle(void);
-extern void usr_led_stop_handle(void);
+extern int usr_key_st_timer_handler(ke_msg_id_t const msgid, void const *param,ke_task_id_t const dest_id, ke_task_id_t const src_id);
+extern void usr_alert_stop_timer_handle(void);
+extern void usr_led_stop_timer_handle(void);
 
 #endif
