@@ -30,39 +30,47 @@
 #define	BUZZ_MUSIC		2
 #define BUZZ_OFF    	3
 
-//priod of note 
-#define	N07P			2024			//note low 7
-#define	N1P				1912			//note mid 1
-#define	N2P				1703
-#define	N3P				1517
-#define	N4P				1432
-#define	N5P				1275
-#define	N6P				1136
-#define	N7P				1012
-#define	N11P			956
-#define	N12P			851
-#define	N13P			758
-#define	N14P			715
-#define	N15p			637
-
 //impulse of note * 2 = priod of note
-#define	N07I			1012
-#define	N1I				956
-#define	N2I				851
-#define	N3I				758
-#define	N4I				716
-#define	N5I				637
-#define	N6I				568
-#define	N7I				506
-#define	N11I			478
-#define	N12I			425
-#define	N13I			379
-#define	N14I			357
-#define	N15I			318
+#define	N07I			506//1012
+#define	N1I				478//956
+#define	N2I				425//851
+#define	N3I				379//758
+#define	N4I				358//716
+#define	N5I				318//637
+#define	N6I				284//568
+#define	N7I				253//506
+#define	N11I			239//478
+#define	N12I			212//425
+#define	N13I			189//379
+#define	N14I			178//357
+#define	N15I			159//318
+#define	N16I			142//284
+#define N17I			126//253
+#define	N21I			119//239
 
-#define		MUSIC_ALERT_NB			136
-#define		MUSIC_START_NB			8
-#define 	MuSIC_END_NB				8
+//priod of note 
+#define	N07P			(N07I*2)			//note low 7
+#define	N1P				(N1I*2)			//note mid 1
+#define	N2P				(N2I*2)
+#define	N3P				(N3I*2)
+#define	N4P				(N4I*2)
+#define	N5P				(N5I*2)
+#define	N6P				(N6I*2)
+#define	N7P				(N7I*2)
+#define	N11P			(N11I*2)
+#define	N12P			(N12I*2)
+#define	N13P			(N13I*2)
+#define	N14P			(N14I*2)
+#define	N15P			(N15I*2)
+#define N16P			(N16I*2)
+#define N17P			(N17I*2)
+#define N21P			(N21I*2)
+//#define N16P			(N16I*2)
+
+#define		MUSIC_ALERT_NB			36
+#define		MUSIC_START_NB			16
+#define 	MUSIC_END_NB				16
+#define		MUSIC_MERTE_PRIOD		4
 
 
 /*

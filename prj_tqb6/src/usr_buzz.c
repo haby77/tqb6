@@ -31,7 +31,7 @@
  * MICRO DEFINITIONS
  ****************************************************************************************
  */
-#define	N07P			2024
+/*#define	N07P			2024
 #define	N1P				1912
 #define	N2P				1703
 #define	N3P				1517
@@ -45,30 +45,32 @@
 #define	N14P			715
 #define	N15P			637
 
-#define	N07I			1012
-#define	N1I				956
-#define	N2I				851
-#define	N3I				758
-#define	N4I				716
-#define	N5I				637
-#define	N6I				568
-#define	N7I				506
-#define	N11I			478
-#define	N12I			425
-#define	N13I			379
-#define	N14I			357
-#define	N15I			318
- 
+#define	N07I			1518
+#define	N1I				1434
+#define	N2I				1277
+#define	N3I				1137
+#define	N4I				1074
+#define	N5I				956
+#define	N6I				852
+#define	N7I				758
+#define	N11I			715
+#define	N12I			637
+#define	N13I			568
+#define	N14I			536
+#define	N15I			477*/
+
+#define	DIDIDI_P		200
+#define	DIDIDI_I 		50
 /*
  * CONST VARIABLE DEFINITIONS
  ****************************************************************************************
  */
-const 	uint16_t	cano1[136];
-const 	uint16_t	cano2[136];
-const 	uint16_t	start1[8];
-const 	uint16_t	start2[8];
-const 	uint16_t	end1[8];
-const 	uint16_t	end2[8];
+const 	uint16_t	alert1[MUSIC_ALERT_NB];
+const 	uint16_t	alert2[MUSIC_ALERT_NB];
+const 	uint16_t	start1[MUSIC_START_NB];
+const 	uint16_t	start2[MUSIC_START_NB];
+const 	uint16_t	end1[MUSIC_END_NB];
+const 	uint16_t	end2[MUSIC_END_NB];
 
 struct buzz_env_tag buzz_env= {BUZZER_BLE_IDLE,MUSIC_OFF,0};
 
@@ -81,11 +83,10 @@ struct buzz_env_tag buzz_env= {BUZZER_BLE_IDLE,MUSIC_OFF,0};
  */
 int usr_buzzer_music_timer_handle(ke_msg_id_t const msgid, void const *param,ke_task_id_t const dest_id, ke_task_id_t const src_id)
 {
-		//QPRINTF("music_choice : %d  meter_Count:%d \r\n",buzz_env.music_choice,buzz_env.meter_Count);
 		switch(buzz_env.music_choice)
 		{
 				case	MUSIC_ALERT		:
-							buzzer_music_on(cano1[buzz_env.meter_Count],cano2[buzz_env.meter_Count]);	
+							buzzer_music_on(alert1[buzz_env.meter_Count],alert2[buzz_env.meter_Count]);	
 							if (buzz_env.meter_Count < MUSIC_ALERT_NB)
 							{
 								buzz_env.meter_Count++;
@@ -96,29 +97,36 @@ int usr_buzzer_music_timer_handle(ke_msg_id_t const msgid, void const *param,ke_
 							}
 							break;
 				case	MUSIC_START		:
-							buzzer_music_on(start1[buzz_env.meter_Count],start2[buzz_env.meter_Count]);
+							//buzzer_music_on(end1[buzz_env.meter_Count],end2[buzz_env.meter_Count]);
+							//buzzer_music_on(start1[buzz_env.meter_Count],start2[buzz_env.meter_Count]);
 							if (buzz_env.meter_Count < MUSIC_START_NB)
 							{
+								if (!(buzz_env.meter_Count%2))
+								{
+										if (!(buzz_env.meter_Count%4))
+									buzzer_music_on(DIDIDI_P,DIDIDI_I);
+										else
+									buzzer_off();
+								}
 								buzz_env.meter_Count++;
 							}
 							else
 							{
 								buzz_env.meter_Count = 0;
-								QPRINTF("debug6\r\n");
 								usr_buzzer_config(BUZZER_BLE_IDLE,MUSIC_OFF);
 							}
 							break;
 				case	MUSIC_END			:
-							buzzer_music_on(end1[buzz_env.meter_Count],end2[buzz_env.meter_Count]);
-							QPRINTF("buzz_env.meter_Count : %d\r\n",buzz_env.meter_Count);
-							if (buzz_env.meter_Count < MuSIC_END_NB)
+							//buzzer_music_on(end1[buzz_env.meter_Count],end2[buzz_env.meter_Count]);
+							if (buzz_env.meter_Count < MUSIC_END_NB)
 							{
+								if (buzz_env.meter_Count == 0)
+									buzzer_music_on(DIDIDI_P,DIDIDI_I);
 								buzz_env.meter_Count++;
 							}
 							else
 							{
 								buzz_env.meter_Count = 0;
-								QPRINTF("debug7\r\n");
 								usr_buzzer_config(BUZZER_BLE_IDLE,MUSIC_OFF);
 							}
 							break;
@@ -126,7 +134,7 @@ int usr_buzzer_music_timer_handle(ke_msg_id_t const msgid, void const *param,ke_
 							break;
 		}
 		if (buzz_env.status != BUZZER_BLE_IDLE)
-		ke_timer_set(USR_BUZZER_MUSIC_TIMER,TASK_USR,16);
+		ke_timer_set(USR_BUZZER_MUSIC_TIMER,TASK_USR,MUSIC_MERTE_PRIOD);
 		else
 		ke_timer_clear(USR_BUZZER_MUSIC_TIMER,TASK_USR);
 		return (KE_MSG_CONSUMED);
@@ -244,7 +252,7 @@ void usr_buzzer_config( uint8_t buzz_state,uint8_t music_choice)
 			ke_timer_clear(USR_BUZZER_MUSIC_TIMER,TASK_USR);
 }
 
-const 	uint16_t	cano1[136] = { N15P, N15P, N13P, N14P, N15P, N15P, N13P, N14P,
+/*const 	uint16_t	cano1[MUSIC_ALERT_NB] = { N15P, N15P, N13P, N14P, N15P, N15P, N13P, N14P,
 																 N15P,  N5P,  N6P,  N7P, N11P, N12P, N13P, N14P,
 																 N13P, N13P, N11P, N12P, N13P, N13P,  N3P,  N4P,
 																  N5P,  N6P,  N5P,  N4P,  N5P,  N3P,  N4P,  N5P,
@@ -262,7 +270,7 @@ const 	uint16_t	cano1[136] = { N15P, N15P, N13P, N14P, N15P, N15P, N13P, N14P,
 																  N7P, N11P, N12P, N11P,  N7P, N11P,  N6P,  N7P,
 																 N11P, N11P, N11P, N11P, N11P, N11P,   0,   0 };
 
-const 	uint16_t	cano2[136] = {	N15I, N15I, N13I, N14I, N15I, N15I, N13I, N14I,
+const 	uint16_t	cano2[MUSIC_ALERT_NB] = {	N15I, N15I, N13I, N14I, N15I, N15I, N13I, N14I,
 																 N15I,  N5I,  N6I,  N7I, N11I, N12I, N13I, N14I,
 																 N13I, N13I, N11I, N12I, N13I, N13I,  N3I,  N4I,
 																  N5I,  N6I,  N5I,  N4I,  N5I,  N3I,  N4I,  N5I,
@@ -278,16 +286,40 @@ const 	uint16_t	cano2[136] = {	N15I, N15I, N13I, N14I, N15I, N15I, N13I, N14I,
 																  N5I,  N4I,  N3I,  N4I,  N5I,  N6I,  N7I, N11I,
 																  N6I,  N6I, N11I,  N7I, N11I, N11I,  N7I,  N6I,
 																  N7I, N11I, N12I, N11I,  N7I, N11I,  N6I,  N7I,
-																 N11I, N11I, N11I, N11I, N11I, N11I,   0,   0 };
-
-const 	uint16_t	start1[8] = {   N5P, N6P, N7P, N11P, N11P, N11P, N11P, 0,
+																 N11I, N11I, N11I, N11I, N11I, N11I,   0,   0 };*/
+const 	uint16_t 	alert1[MUSIC_ALERT_NB] = {	
+																N1P,N2P,N3P,N4P,N5P,N6P,N7P,N11P,
+																//N2P,N3P,N4P,N5P,N6P,N7P,N11P,N12P,
+																N3P,N4P,N5P,N6P,N7P,N11P,N12P,N13P,
+																//N4P,N5P,N6P,N7P,N11P,N12P,N13P,N14P,
+																N5P,N6P,N7P,N11P,N12P,N13P,N14P,N15P,
+																//N6P,N7P,N11P,N12P,N13P,N14P,N15P,N16P,
+																N11P,N12P,N13P,N14P,N15P,N16P,N17P,N21P,
+																0,0,0,0,
+};
+	
+const 	uint16_t  alert2[MUSIC_ALERT_NB] = {	N1I,N2I,N3I,N4I,N5I,N6I,N7I,N11I,
+																//N2I,N3I,N4I,N5I,N6I,N7I,N11I,N12I,
+																N3I,N4I,N5I,N6I,N7I,N11I,N12I,N13I,
+																//N4I,N5I,N6I,N7I,N11I,N12I,N13I,N14I,
+																N5I,N6I,N7I,N11I,N12I,N13I,N14I,N15I,
+																//N6I,N7I,N11I,N12I,N13I,N14I,N15I,N16I,
+																N11I,N12I,N13I,N14I,N15I,N16I,N17I,N21I,
+																0,0,0,0,
 };
 
-const 	uint16_t	start2[8] = {   N5I, N6I, N7I, N11I, N11I, N11I, N11I, 0,
+const 	uint16_t	start1[MUSIC_START_NB] = { 	DIDIDI_P, DIDIDI_P, DIDIDI_P, 0, DIDIDI_P, DIDIDI_P, DIDIDI_P, 0,
+																							//DIDIDI_P, DIDIDI_P, 0, 0, DIDIDI_P, DIDIDI_P, 0, 0,
 };
 
-const 	uint16_t	end1[8] = {   N4P, N3P, N2P, N1P, N1P, N1P, N1P, 0,
+const 	uint16_t	start2[MUSIC_START_NB] = {  DIDIDI_I, DIDIDI_I, DIDIDI_I, 0, DIDIDI_I, DIDIDI_I, DIDIDI_I, 0,
+																							//DIDIDI_I, DIDIDI_I, 0, 0, DIDIDI_I, DIDIDI_I, 0, 0,
 };
 
-const 	uint16_t	end2[8] = {   N4I, N3I, N2I, N1I, N1I, N1I, N1I, 0,
+const 	uint16_t	end1[MUSIC_END_NB] = {  DIDIDI_P, DIDIDI_P, DIDIDI_P, DIDIDI_P, DIDIDI_P, DIDIDI_P, DIDIDI_P, DIDIDI_P,
+																					//DIDIDI_P, DIDIDI_P, DIDIDI_P, DIDIDI_P, DIDIDI_P, DIDIDI_P, DIDIDI_P, DIDIDI_P,
+};
+
+const 	uint16_t	end2[MUSIC_END_NB] = {  DIDIDI_I, DIDIDI_I, DIDIDI_I, DIDIDI_I, DIDIDI_I, DIDIDI_I, DIDIDI_I, DIDIDI_I,
+																					//DIDIDI_I, DIDIDI_I, DIDIDI_I, DIDIDI_I, DIDIDI_I, DIDIDI_I, DIDIDI_I, DIDIDI_I,
 };
