@@ -101,13 +101,15 @@ int usr_buzzer_music_timer_handle(ke_msg_id_t const msgid, void const *param,ke_
 							//buzzer_music_on(start1[buzz_env.meter_Count],start2[buzz_env.meter_Count]);
 							if (buzz_env.meter_Count < MUSIC_START_NB)
 							{
-								if (!(buzz_env.meter_Count%2))
+								/*if (!(buzz_env.meter_Count%2))
 								{
 										if (!(buzz_env.meter_Count%4))
 									buzzer_music_on(DIDIDI_P,DIDIDI_I);
 										else
 									buzzer_off();
-								}
+								}*/
+								if (buzz_env.meter_Count == 0)
+									buzzer_music_on(DIDIDI_P,DIDIDI_I);
 								buzz_env.meter_Count++;
 							}
 							else
@@ -120,8 +122,15 @@ int usr_buzzer_music_timer_handle(ke_msg_id_t const msgid, void const *param,ke_
 							//buzzer_music_on(end1[buzz_env.meter_Count],end2[buzz_env.meter_Count]);
 							if (buzz_env.meter_Count < MUSIC_END_NB)
 							{
-								if (buzz_env.meter_Count == 0)
+								/*if (buzz_env.meter_Count == 0)
+									buzzer_music_on(DIDIDI_P,DIDIDI_I);*/
+								if (!(buzz_env.meter_Count%2))
+								{
+										if (!(buzz_env.meter_Count%4))
 									buzzer_music_on(DIDIDI_P,DIDIDI_I);
+										else
+									buzzer_off();
+								}
 								buzz_env.meter_Count++;
 							}
 							else
