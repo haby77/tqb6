@@ -18,7 +18,7 @@
 // User configuration
 
 /// Firmware Version
-#define CFG_FIRMWARE_VERSION   "1.0.0" 
+#define CFG_FIRMWARE_VERSION   "1.00" 
 
 /// manufacturer info
 #define CFG_MANU_NAME   "tchip" 
