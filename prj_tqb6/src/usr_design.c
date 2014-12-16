@@ -58,10 +58,16 @@
 #define LED_OFF_DUR_IDLE                  0xffff
 
 
+// ///IOS Connection Parameter
+// #define IOS_CONN_INTV_MAX                              0x0080
+// #define IOS_CONN_INTV_MIN                              0x0008
+// #define IOS_SLAVE_LATENCY                              0x0001
+// #define IOS_STO_MULT                                   0x012c
+
 ///IOS Connection Parameter
 #define IOS_CONN_INTV_MAX                              0x0080
-#define IOS_CONN_INTV_MIN                              0x0008
-#define IOS_SLAVE_LATENCY                              0x0001
+#define IOS_CONN_INTV_MIN                              0x0064
+#define IOS_SLAVE_LATENCY                              0x0000
 #define IOS_STO_MULT                                   0x012c
 
 //tchip add
